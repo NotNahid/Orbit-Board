@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f1efec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<title>Orbit Board — Nothing-style keyboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1efec;--surf:#e6e3df;--ink:#0b0b0b;--mute:#76726d;--line:#cfcbc5;--red:#e5252a;--dot:#0b0b0b22;
+--dm:"Doto","Space Mono",ui-monospace,monospace;--mono:"Space Mono",ui-monospace,Menlo,monospace;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--surf:#111;--ink:#f1efec;--mute:#85817c;--line:#2a2a2a;--dot:#ffffff1f}}
+:root[data-theme="dark"]{--bg:#000;--surf:#111;--ink:#f1efec;--mute:#85817c;--line:#2a2a2a;--dot:#ffffff1f}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:14px;line-height:1.6;
+background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:16px 16px}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.logo{font-family:var(--dm);font-weight:900;font-size:22px;letter-spacing:.04em;display:flex;gap:10px;align-items:center;text-transform:none}
+.logo i{width:12px;height:12px;border-radius:50%;background:var(--red);display:block;animation:blink 2s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+.nl{display:flex;gap:18px;align-items:center}
+.nl a{text-decoration:none;color:var(--mute)}.nl a:hover{color:var(--ink)}
+.tg{font:inherit;background:none;border:1px solid var(--line);color:var(--ink);border-radius:99px;padding:4px 12px;cursor:pointer;text-transform:uppercase;letter-spacing:.1em;font-size:11px}
+.hero{padding:56px 0 40px}
+.tag{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:4px 14px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.tag b{width:7px;height:7px;border-radius:50%;background:var(--red)}
+h1{font-family:var(--dm);font-weight:900;font-size:clamp(56px,15vw,168px);line-height:.88;margin:22px 0 18px;letter-spacing:-.01em}
+h1 span{color:var(--red)}
+.lead{max-width:520px;color:var(--mute);margin:0 0 28px}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.b{display:inline-flex;gap:10px;align-items:center;text-decoration:none;padding:13px 22px;border-radius:99px;border:1px solid var(--ink);font-size:12px;letter-spacing:.1em;text-transform:uppercase;transition:.2s}
+.b.p{background:var(--red);border-color:var(--red);color:#fff}
+.b:hover{transform:translateY(-2px)}
+.b.g:hover{background:var(--ink);color:var(--bg)}
+section{padding:44px 0}
+.sh{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:14px;margin-bottom:26px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.sh h2{margin:0;font:900 clamp(26px,5vw,40px)/1 var(--dm);letter-spacing:.02em;text-transform:none;color:var(--ink)}
+/* device */
+.scr em{display:inline-block;width:.5ch;height:.9em;background:var(--red);vertical-align:-.1em;animation:blink 1s steps(2) infinite}
+.scr small{position:absolute;right:14px;top:10px;font:400 10px var(--mono);color:#85817c;letter-spacing:.14em}
+.hint{text-align:center;color:var(--mute);font-size:11px;margin-top:14px;letter-spacing:.1em;text-transform:uppercase}
+/* stats */
+.st{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:24px;padding:22px}
+.n{font:900 56px/1 var(--dm);color:var(--ink)}.n.r{color:var(--red)}
+.card p{margin:8px 0 0;color:var(--mute);font-size:12px}
+.card h3{font:700 22px/1.1 var(--dm);margin:14px 0 8px}
+.ic{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font:900 18px var(--dm);color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+/* palette */
+.pal{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.sw{border-radius:24px;aspect-ratio:1;padding:16px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line)}
+.sw b{font:900 22px/1 var(--dm);letter-spacing:0;text-transform:none}
+/* pipeline */
+.pl{display:grid;gap:0;max-width:760px}
+.step{display:grid;grid-template-columns:36px 1fr auto;gap:16px;align-items:start;padding:14px 0;border-bottom:1px dashed var(--line);position:relative}
+.dotm{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);margin:4px 0 0 9px;transition:.3s}
+.step.run .dotm{border-color:var(--red);animation:blink .6s steps(2) infinite}
+.step.ok .dotm{background:var(--red);border-color:var(--red)}
+.step h4{margin:0;font:700 20px/1.2 var(--dm)}.step p{margin:2px 0 0;color:var(--mute);font-size:12px}
+.step code{font-size:11px;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:2px 10px;white-space:nowrap}
+.ctl{display:flex;gap:14px;align-items:center;margin-top:22px;flex-wrap:wrap}
+.bar{display:flex;gap:3px}.bar i{width:6px;height:6px;border-radius:50%;background:var(--line);display:block}.bar i.on{background:var(--red)}
+.bt{font:inherit;cursor:pointer;background:var(--ink);color:var(--bg);border:0;border-radius:99px;padding:12px 22px;letter-spacing:.1em;text-transform:uppercase;font-size:12px}
+.note{font-size:11px;color:var(--mute)}
+footer{border-top:1px solid var(--line);padding:30px 0 50px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.pre{overflow-x:auto;background:var(--surf);border:1px solid var(--line);border-radius:20px;padding:18px;font-size:12px;margin:0}
+.lv{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mute);margin-right:8px}.lv.on{background:var(--red);animation:blink 1s steps(2) infinite}
+.run-r{display:grid;grid-template-columns:24px 1fr auto;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line);text-decoration:none;align-items:center}.run-r b{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);display:block}.run-r.success b{background:var(--red);border-color:var(--red)}.run-r.failure b{border-color:var(--red)}.run-r.progress b{border-color:var(--red);animation:blink .6s steps(2) infinite}.run-r span{font:700 16px var(--dm)}.run-r code{font-size:11px;color:var(--mute)}
+
+.man{font:900 clamp(26px,6vw,52px)/1.05 var(--dm);margin:0 0 24px}.man span{display:block;margin-top:12px;font:400 13px var(--mono);color:var(--red);letter-spacing:.06em;text-transform:uppercase}
+
+.dev{--bd:#000;--kc:#1c1d20;--kf:#fff;--ca:#c23636;--fa:#fff;--sp:#e2b438;--cr:#c23636;--cb:#2a5288;--cy:#e2b438;--cw:#eae6e1;--cd:#1c1d20;--fr:#fff;--fb:#fff;--fy:#111;--fw:#111;--fd:#fff;
+background:var(--bd);border:1px solid var(--line);border-radius:30px;padding:14px;max-width:640px;margin:0 auto;transition:background .25s}
+.scr{background:color-mix(in srgb,var(--kf) 8%,var(--bd));color:var(--kf);border-radius:18px;padding:16px 18px;min-height:84px;font:900 30px/1.1 var(--dm);word-break:break-all;margin-bottom:10px;position:relative;white-space:pre-wrap}
+.scr em{display:inline-block;width:.5ch;height:.9em;background:var(--ca);vertical-align:-.1em;animation:blink 1s steps(2) infinite}
+.tb{display:flex;justify-content:space-between;color:var(--kf);opacity:.8;padding:4px 10px 10px;font:700 18px var(--dm)}
+.nr{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-bottom:6px;padding:0 2px}
+.nr i{height:24px;border-radius:7px;display:grid;place-items:center;font:900 14px var(--dm);font-style:normal}
+.kb{display:grid;gap:5px}
+.row{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:5px}
+.k{position:relative;min-width:0;width:100%;height:clamp(44px,10.5vw,56px);border:0;border-radius:11px;padding:0;font:900 clamp(15px,4vw,21px) var(--dm);cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;overflow:hidden;transition:transform .08s,filter .08s}
+.k.y{background:var(--cy);color:var(--fy)}.k.b{background:var(--cb);color:var(--fb)}.k.r{background:var(--cr);color:var(--fr)}.k.w{background:var(--cw);color:var(--fw)}.k.d{background:var(--cd);color:var(--fd)}.k.a{background:var(--ca);color:var(--fa)}
+.k.sp{color:var(--sp);font-size:clamp(12px,3vw,15px);letter-spacing:.04em}
+.k.sm{font-size:clamp(11px,2.8vw,13px)}
+.k sup{position:absolute;right:4px;top:2px;font:400 9px var(--mono);opacity:.75;pointer-events:none}
+.k:active,.k.on{filter:brightness(1.25);transform:scale(.95)}
+.nr i{transition:transform .08s,filter .08s}.nr i.on{filter:brightness(1.4);transform:scale(1.18)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:760px;margin:0 auto 18px}
+.chips button{display:inline-flex;gap:8px;align-items:center;font:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:none;color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:6px 14px 6px 8px;cursor:pointer}
+.chips button i{width:14px;height:14px;border-radius:50%;display:block;border:1px solid #8884}
+.chips button.on{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
+
+.tb button{background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:2px 7px;border-radius:9px}.tb button.on{color:var(--ca);background:color-mix(in srgb,var(--kf) 10%,transparent)}
+.ph{font:700 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--kf);opacity:.6;padding:2px 4px}
+.tiles{display:grid;gap:6px}.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:68px;border:0;border-radius:14px;background:var(--kc);color:var(--kf);cursor:pointer;font:inherit}
+.tile b{font:900 22px var(--dm)}.tile span{font-size:11px;letter-spacing:.06em}.tile:active{filter:brightness(1.3)}
+.etabs{display:flex;gap:4px;overflow-x:auto}.etabs button{flex:1;border:0;background:none;font-size:20px;padding:6px;border-radius:10px;cursor:pointer;opacity:.55}.etabs button.on{opacity:1;background:var(--kc)}
+.egrid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px}.egrid button{border:0;background:none;font-size:clamp(20px,5.5vw,28px);padding:6px 0;cursor:pointer;border-radius:8px}.egrid button:active{background:var(--kc)}
+.cl{display:grid;gap:6px;max-height:190px;overflow:auto}.ci{display:flex;gap:8px;align-items:center;background:var(--kc);color:var(--kf);border-radius:12px;padding:10px 12px;font:700 13px var(--mono)}
+.ci .ct{flex:1;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ci button{background:none;border:0;color:var(--ca);cursor:pointer;font-size:15px}.ci.mute{opacity:.6;font-weight:400}
+.num{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.num button{height:50px;border:0;border-radius:12px;background:var(--kc);color:var(--kf);font:900 22px var(--dm);cursor:pointer}.num button:active{filter:brightness(1.3)}
+.voice{display:grid;place-items:center;gap:8px;padding:18px 0;color:var(--kf);text-align:center}.voice p{margin:0;font:900 22px var(--dm)}.voice small{opacity:.6;font-size:11px;max-width:300px}
+.vr{display:flex;gap:10px}.vr i{width:16px;height:16px;border-radius:50%;background:var(--ca);animation:vp 1s ease-in-out infinite}.vr i:nth-child(2){animation-delay:.2s}.vr i:nth-child(3){animation-delay:.4s}@keyframes vp{50%{transform:scale(1.9);opacity:.4}}
+
+.di{display:block;width:1.1em;height:1.1em}
+.k .di{width:clamp(19px,5.2vw,25px);height:clamp(19px,5.2vw,25px);margin:auto}
+.k sup .di{width:11px;height:11px}
+.tb button .di{width:22px;height:22px}
+.tile b .di{width:28px;height:28px;margin:auto}
+.ic .di{width:26px;height:26px}
+.gi{display:inline-block;vertical-align:-.12em}.gi .di{width:.95em;height:.95em}
+.gg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.gg button{height:52px;border:0;border-radius:12px;background:var(--kc);color:var(--kf);cursor:pointer}.gg button .di{width:30px;height:30px;margin:auto}.gg button:active{filter:brightness(1.3)}
+.etabs button .di{width:24px;height:24px;margin:auto}.etabs button{color:var(--kf)}
+.ci button .di{width:16px;height:16px}.ci button.off{opacity:.35}
+.num button .di{width:24px;height:24px;margin:auto}
+.b .di{display:inline-block;width:16px;height:16px;vertical-align:-3px}
+.bt .di{display:inline-block;width:16px;height:16px;vertical-align:-3px}
+.voice .di{width:34px;height:34px;color:var(--ca)}
+
+.dev{position:relative}
+.sg{display:flex;align-items:center;gap:2px;color:var(--kf);padding-bottom:2px}
+.sb{width:34px;height:34px;border:0;background:none;color:inherit;cursor:pointer;flex:none;border-radius:10px;padding:0}.sb .di{width:20px;height:20px;margin:auto}
+.sgw{flex:1;display:grid;grid-template-columns:repeat(3,1fr);min-width:0}
+.sgb{background:none;border:0;color:inherit;font:400 15px var(--mono);height:34px;padding:0 4px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-left:1px solid #e2b438aa}.sgb:first-child{border-left:0}.sgb.mid{font-weight:700}
+.nb{height:28px;border:0;border-radius:8px;display:grid;place-items:center;font:900 14px var(--dm);cursor:pointer;padding:0;touch-action:manipulation}
+.fx{position:absolute;inset:0;pointer-events:none;z-index:20}
+.bub{position:absolute;transform:translateX(-50%);min-width:56px;height:60px;padding:0 14px;border-radius:14px;display:grid;place-items:center;font:900 30px var(--dm);box-shadow:0 8px 24px #0009}
+.pt{position:absolute;width:5px;height:5px;border-radius:50%;pointer-events:none}
+.vp{position:absolute;display:grid;grid-template-columns:repeat(3,52px);gap:5px;padding:6px;border-radius:16px;background:#0b0b0bf2;pointer-events:auto;transform:translateX(-50%);box-shadow:0 8px 24px #0009}
+.vt{height:46px;border-radius:11px;display:grid;place-items:center;font:700 19px var(--mono);pointer-events:auto}.vt.on{outline:2px solid #fff}
+.lp{position:absolute;left:6%;right:6%;top:96px;background:#0b0b0b;color:#f1efec;border-radius:20px;padding:14px;pointer-events:auto;box-shadow:0 12px 36px #000b}
+.lp h5{margin:0 0 10px;font:700 15px var(--mono);text-align:center}
+.lp .it{display:flex;justify-content:space-between;align-items:center;width:100%;border:0;background:transparent;color:inherit;font:inherit;font-size:15px;padding:10px 12px;border-radius:4px;cursor:pointer;text-align:left}.lp .it small{display:block;opacity:.65;font-size:10px}.lp .it.on{background:#c23636}.lp .it .di{width:18px;height:18px}
+.lp .ac{display:flex;justify-content:space-around;margin-top:10px}.lp .ac button{background:none;border:0;color:#e5252a;font:inherit;font-size:13px;cursor:pointer}
+.k.sp{background:var(--bd);color:var(--kf);border:2px solid var(--ca);font:400 clamp(12px,3.2vw,16px) var(--mono);letter-spacing:.02em}
+.k.on1{outline:2px solid var(--ca);outline-offset:-2px}
+.bub.sp{height:auto;min-width:130px;display:grid;gap:2px;padding:10px 20px;font:700 22px var(--mono);border:2px solid var(--ca);text-align:center}.bub.sp small{font:400 10px var(--mono);opacity:.7;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:560px){.nl a{display:none}.step{grid-template-columns:30px 1fr}.step code{grid-column:2;justify-self:start}}
+/* ---------- responsive: phone, tablet, desktop ---------- */
+html{-webkit-text-size-adjust:100%}body{overflow-x:clip}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:31;background:var(--bg)}
+.k,.k *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.k{touch-action:none}.k.sp{touch-action:pan-y}
+.nb,.sgb,.sb,.tb button{touch-action:manipulation}
+.try{display:flex;flex-direction:column}.stage{order:1;min-width:0}.tips{order:2;margin-top:26px}
+.tips ol{list-style:none;counter-reset:t;padding:0;margin:0;display:grid;gap:14px}
+.tips li{display:grid;grid-template-columns:34px 1fr;gap:10px;font-size:13px;color:var(--mute)}
+.tips li::before{counter-increment:t;content:counter(t,decimal-leading-zero);font:900 22px/1 var(--dm);color:var(--red)}
+.tips b{color:var(--ink)}.tips code{border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--ink)}
+@media(hover:hover){.k:hover{filter:brightness(1.12)}.tile:hover,.gg button:hover,.num button:hover{filter:brightness(1.2)}.chips button:hover,.tg:hover{border-color:var(--ink)}}
+@media(hover:none){.pc-only{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(max-width:640px){
+  .wrap{padding:0 14px}
+  nav{flex-wrap:wrap;row-gap:6px;padding:12px 0 8px}
+  .nl{width:100%;overflow-x:auto;gap:18px;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .nl::-webkit-scrollbar{display:none}.nl a{display:inline-block;padding:6px 0}.tg{margin-left:auto;flex:none}
+  .hero{padding:26px 0 22px}
+  h1{font-size:clamp(52px,17.5vw,96px)}
+  .btns .b{flex:1 1 100%;justify-content:center;padding:15px 22px}
+  section{padding:28px 0}.sh{margin-bottom:18px}.sh h2{font-size:26px}.sh span{font-size:10px}
+  .grid{grid-template-columns:1fr}.st{grid-template-columns:repeat(2,1fr)}.pal{grid-template-columns:repeat(2,1fr)}
+  .card{padding:18px;border-radius:20px}.n{font-size:44px}.man{font-size:28px}
+  .dev{border-radius:22px;padding:10px;margin:0 -8px}
+  .scr{min-height:68px;font-size:24px;padding:12px 14px;border-radius:14px}
+  .sb{width:40px;height:40px}.sgb{height:40px;font-size:16px}
+  .tb{padding:2px 4px 8px}.tb button{padding:6px 8px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;margin:0 -14px 14px;padding:0 14px 6px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}.chips button{flex:none}
+  .lp{left:3%;right:3%;top:80px}
+  .step h4{font-size:17px}.ctl .bt{width:100%;justify-content:center}.ctl{gap:10px}
+  footer{flex-direction:column;gap:8px}
+}
+@media(min-width:641px) and (max-width:959px){.stage{max-width:640px;margin:0 auto;width:100%}.tips{max-width:640px;margin-left:auto;margin-right:auto}}
+@media(min-width:960px){
+  .wrap{padding:0 32px}.hero{padding:84px 0 56px}section{padding:64px 0}
+  .try{display:grid;grid-template-columns:minmax(240px,1fr) minmax(0,660px);gap:56px;align-items:start}
+  .tips{order:0;margin:0;position:sticky;top:96px}.stage{order:0}
+  .dev .hint{display:none}.dev{margin:0}
+  .k{height:58px}
+}
+@media(min-width:1400px){.wrap{max-width:1240px}}
+/* ---------- frosted-glass gooey nav (adapted from "Frosted Glass Gooey Gravity Nav" by Simey, CodePen) ---------- */
+:root{--linear-ease:linear(0,.068,.19 2.7%,.804 8.1%,1.037,1.199 13.2%,1.245,1.27 15.8%,1.274,1.272 17.4%,1.249 19.1%,.996 28%,.949,.928 33.3%,.926,.933 36.8%,1.001 45.6%,1.013,1.019 50.8%,1.018 54.4%,1 63.1%,.995 68%,1.001 85%,1);
+--noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+--g-bg:hsl(0deg 0% 100%/.42);--g-fg:#0b0b0b;--g-act:#fff;--g-pill:#0b0b0b;--g-pillbg:#fff;--g-blend:darken;--g-bd:#0000001f;--g-hi:hsl(0deg 0% 100%/.5);--g-in:hsl(205deg 30% 10%/.07);
+--color-1:#e5252a;--color-2:#e2b438;--color-3:#2a5288;--color-4:#0b0b0b}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--g-bg:hsl(205deg 0% 0%/.28);--g-fg:#fff;--g-act:#000;--g-pill:#fff;--g-pillbg:#000;--g-blend:lighten;--g-bd:#ffffff2b;--g-hi:hsl(205deg 70% 90%/.2);--g-in:hsl(205deg 30% 10%/.25);--color-3:#3d6bff;--color-4:#fff}}
+:root[data-theme="dark"]{--g-bg:hsl(205deg 0% 0%/.28);--g-fg:#fff;--g-act:#000;--g-pill:#fff;--g-pillbg:#000;--g-blend:lighten;--g-bd:#ffffff2b;--g-hi:hsl(205deg 70% 90%/.2);--g-in:hsl(205deg 30% 10%/.25);--color-3:#3d6bff;--color-4:#fff}
+html{scroll-padding-top:96px}
+.hero{padding-top:clamp(104px,15vh,150px)}
+.dock{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:0;right:0;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:0 clamp(12px,3vw,32px);pointer-events:none}
+.dock>*{pointer-events:auto}
+.brand{justify-self:start}.mode{justify-self:end}.pill{justify-self:center}
+.gl{display:flex;align-items:center;position:relative;transform:translate3d(0,0,.01px);opacity:.999;background:var(--g-bg);-webkit-backdrop-filter:blur(9px) brightness(1.1);backdrop-filter:blur(9px) brightness(1.1);border-radius:100vw;padding:.4em;border:1px solid var(--g-bd);color:var(--g-fg);
+ box-shadow:0 4px 20px hsl(205deg 50% 30%/.15),0 4px 10px hsl(205deg 30% 10%/.075),inset 0 -4px 15px 6px var(--g-hi),inset 0 -2px 5px var(--g-hi),inset 0 -1px 1px var(--g-hi),inset 0 10px 15px var(--g-in),inset 0 1px 2px var(--g-hi)}
+.gl:before,.gl:after{content:"";inset:0;position:absolute;border-radius:100vw;pointer-events:none;-webkit-mask-image:var(--noise);mask-image:var(--noise);-webkit-mask-repeat:repeat;mask-repeat:repeat;mask-mode:luminance}
+.gl:before{z-index:1;-webkit-mask-size:55%;mask-size:55%;-webkit-backdrop-filter:blur(7px) brightness(1.05);backdrop-filter:blur(7px) brightness(1.05);background:hsl(205deg 0% 100%/.1)}
+.gl:after{z-index:2;-webkit-mask-size:50%;mask-size:50%;-webkit-backdrop-filter:blur(5px) brightness(.95);backdrop-filter:blur(5px) brightness(.95);background:hsl(205deg 0% 20%/.05);box-shadow:inset 0 -4px 15px 5px var(--g-hi),inset 0 -2px 5px var(--g-hi),inset 0 -1px 1px var(--g-hi),inset 0 1px 2px var(--g-hi)}
+.gl>*{position:relative;z-index:3}
+.brand{gap:.65em;padding:.5em 1.15em .5em .95em;text-decoration:none;font:900 15px var(--dm);letter-spacing:.04em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--red);animation:blink 2s steps(2) infinite}
+.mode{width:46px;height:46px;padding:0;justify-content:center;cursor:pointer}.mode .di{width:20px;height:20px;margin:auto}
+.pill ul{display:flex;gap:.2em;list-style:none;margin:0;padding:0 .2em;color:var(--g-fg);text-shadow:0 1px 1px hsl(205deg 30% 10%/.12)}
+.pill li{position:relative;padding:.75em 1.15em;border-radius:100vw;cursor:pointer;font:700 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;transition:all 1.8s var(--linear-ease) .2s,box-shadow .3s ease;box-shadow:0 0 .5px 1.5px transparent;white-space:nowrap}
+.pill li a{color:inherit;text-decoration:none;outline:none}
+.pill li:focus-within:has(:focus-visible){box-shadow:0 0 .5px 1.5px var(--g-fg)}
+.pill li:after{content:"";position:absolute;inset:0;border-radius:100vw;background:var(--g-pill);opacity:0;scale:0;transition:all 2s var(--linear-ease) .2s;z-index:-1}
+.pill li.active{color:var(--g-act);text-shadow:none}.pill li.active:after{opacity:1;scale:1}
+.effect{position:fixed;left:0;top:0;width:0;height:0;opacity:1;pointer-events:none;display:grid;place-items:center;z-index:51}
+.effect.text{color:var(--g-fg);z-index:52;transition:color 0s ease;font:700 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.effect.text.active{color:var(--g-act);transition:color 1.8s var(--linear-ease) .2s}
+.effect.text.hidden{opacity:0}
+.effect.filter{filter:blur(7px) contrast(20) blur(0);mix-blend-mode:var(--g-blend)}
+.effect.filter::before{content:"";position:absolute;inset:-75px;z-index:-2;background:var(--g-pillbg)}
+.effect.filter::after{content:"";position:absolute;inset:0;background:var(--g-pill);scale:0;opacity:0;z-index:-1;border-radius:100vw}
+.effect.active:after{animation:pill 2s var(--linear-ease) .2s both}
+.particle,.point{display:block;opacity:0;width:20px;height:20px;border-radius:100%;transform-origin:center}
+.particle{--time:5s;position:absolute;top:calc(50% - 8px);left:calc(50% - 8px);animation:particle calc(var(--time)) ease 1 -350ms}
+.point{background:var(--color);opacity:1;animation:point calc(var(--time)) ease 1 -350ms}
+@keyframes particle{0%{transform:rotate(0deg) translate(var(--start-x),var(--start-y));opacity:1;animation-timing-function:cubic-bezier(.55,0,1,.45)}70%{transform:rotate(calc(var(--rotate)*.5)) translate(calc(var(--end-x)*1.2),calc(var(--end-y)*1.2));opacity:1;animation-timing-function:ease}85%{transform:rotate(calc(var(--rotate)*.66)) translate(var(--end-x),var(--end-y));opacity:1}100%{transform:rotate(calc(var(--rotate)*1.2)) translate(calc(var(--end-x)*.5),calc(var(--end-y)*.5));opacity:1}}
+@keyframes point{0%{scale:0;opacity:0;animation-timing-function:cubic-bezier(.55,0,1,.45)}25%{scale:calc(var(--scale)*.25)}38%{opacity:1}65%{scale:var(--scale);opacity:1;animation-timing-function:ease}85%{scale:var(--scale);opacity:1}100%{scale:0;opacity:0}}
+@keyframes pill{to{scale:1;opacity:1}}
+@media(prefers-reduced-motion:reduce){.effect{display:none!important}.pill li.active:after{opacity:1;scale:1}}
+@media(max-width:640px){
+  .dock{grid-template-columns:auto 1fr auto;gap:8px}
+  .brand{padding:0;width:46px;height:46px;justify-content:center}.brand span{display:none}
+  .pill li{padding:.8em .8em;font-size:10.5px;letter-spacing:.08em}.pill li.hide-sm{display:none}
+}
+@media(max-width:380px){.pill li{padding:.8em .62em;font-size:10px}}
+</style>
+</head>
+<!-- Dot icons derived from Doticons, MIT License, Copyright (c) 2023 Eduard-Constantin Ibinceanu. https://github.com/eduardconstantin/doticons -->
+<body>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"><defs><symbol id="d-microphone" viewBox="0 0 16 16"><path d="M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M2.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M13.5 6.5h.01M2.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M13.5 7.5h.01M2.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M13.5 8.5h.01M3.5 9.5h.01M12.5 9.5h.01M3.5 10.5h.01M4.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M7.5 12.5h.01M8.5 12.5h.01M7.5 13.5h.01M8.5 13.5h.01M7.5 14.5h.01M8.5 14.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-pencil" viewBox="0 0 16 16"><path d="M10.5 1.5h.01M11.5 1.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M7.5 4.5h.01M8.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M13.5 6.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-close" viewBox="0 0 16 16"><path d="M1.5 0.5h.01M14.5 0.5h.01M0.5 1.5h.01M1.5 1.5h.01M2.5 1.5h.01M13.5 1.5h.01M14.5 1.5h.01M15.5 1.5h.01M1.5 2.5h.01M2.5 2.5h.01M3.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M14.5 2.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M1.5 13.5h.01M2.5 13.5h.01M3.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M14.5 13.5h.01M0.5 14.5h.01M1.5 14.5h.01M2.5 14.5h.01M13.5 14.5h.01M14.5 14.5h.01M15.5 14.5h.01M1.5 15.5h.01M14.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-cog" viewBox="0 0 16 16"><path d="M7.5 0.5h.01M8.5 0.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M7.5 15.5h.01M8.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-trash" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M4.5 15.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01M11.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-heart" viewBox="0 0 16 16"><path d="M3.5 0.5h.01M4.5 0.5h.01M5.5 0.5h.01M10.5 0.5h.01M11.5 0.5h.01M12.5 0.5h.01M2.5 1.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M13.5 1.5h.01M1.5 2.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M14.5 2.5h.01M0.5 3.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M15.5 3.5h.01M0.5 4.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M15.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M7.5 15.5h.01M8.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-stars" viewBox="0 0 16 16"><path d="M10.5 1.5h.01M11.5 1.5h.01M3.5 2.5h.01M4.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M3.5 5.5h.01M4.5 5.5h.01M7.5 7.5h.01M8.5 7.5h.01M7.5 8.5h.01M8.5 8.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M7.5 13.5h.01M8.5 13.5h.01M7.5 14.5h.01M8.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-thumbsup" viewBox="0 0 16 16"><path d="M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M0.5 11.5h.01M1.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M0.5 12.5h.01M1.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M0.5 13.5h.01M1.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M14.5 13.5h.01M0.5 14.5h.01M1.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M13.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-sun" viewBox="0 0 16 16"><path d="M7.5 0.5h.01M8.5 0.5h.01M7.5 1.5h.01M8.5 1.5h.01M2.5 2.5h.01M13.5 2.5h.01M3.5 3.5h.01M12.5 3.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M3.5 12.5h.01M12.5 12.5h.01M2.5 13.5h.01M13.5 13.5h.01M7.5 14.5h.01M8.5 14.5h.01M7.5 15.5h.01M8.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-semiMoon" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-search" viewBox="0 0 16 16"><path d="M4.5 0.5h.01M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M2.5 1.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M1.5 2.5h.01M2.5 2.5h.01M3.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M0.5 4.5h.01M1.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M1.5 9.5h.01M2.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M12.5 13.5h.01M13.5 13.5h.01M14.5 13.5h.01M13.5 14.5h.01M14.5 14.5h.01M15.5 14.5h.01M14.5 15.5h.01M15.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-bell" viewBox="0 0 16 16"><path d="M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M7.5 15.5h.01M8.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-camera" viewBox="0 0 16 16"><path d="M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M0.5 4.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M15.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M0.5 11.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M15.5 11.5h.01M0.5 12.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M15.5 12.5h.01M0.5 13.5h.01M1.5 13.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M14.5 13.5h.01M15.5 13.5h.01M1.5 14.5h.01M2.5 14.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M13.5 14.5h.01M14.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-cloud" viewBox="0 0 16 16"><path d="M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M0.5 11.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M15.5 11.5h.01M0.5 12.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M1.5 13.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-cat" viewBox="0 0 16 16"><path d="M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M15.5 3.5h.01M0.5 4.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M15.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M6.5 9.5h.01M8.5 9.5h.01M10.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M0.5 11.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-paw" viewBox="0 0 16 16"><path d="M4.5 1.5h.01M5.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M1.5 6.5h.01M2.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-bookmark" viewBox="0 0 16 16"><path d="M4.5 0.5h.01M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M11.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M2.5 14.5h.01M3.5 14.5h.01M4.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M13.5 14.5h.01M2.5 15.5h.01M3.5 15.5h.01M12.5 15.5h.01M13.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-shield" viewBox="0 0 16 16"><path d="M7.5 1.5h.01M8.5 1.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M7.5 14.5h.01M8.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-location" viewBox="0 0 16 16"><path d="M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M7.5 15.5h.01M8.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-phone" viewBox="0 0 16 16"><path d="M2.5 1.5h.01M3.5 1.5h.01M1.5 2.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M14.5 13.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M13.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-chat" viewBox="0 0 16 16"><path d="M1.5 1.5h.01M2.5 1.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M13.5 1.5h.01M14.5 1.5h.01M0.5 2.5h.01M1.5 2.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M14.5 2.5h.01M15.5 2.5h.01M0.5 3.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M15.5 3.5h.01M0.5 4.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M15.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M3.5 15.5h.01M4.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-lock-close" viewBox="0 0 16 16"><path d="M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M4.5 4.5h.01M5.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M4.5 5.5h.01M5.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M4.5 6.5h.01M5.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M2.5 9.5h.01M3.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M2.5 10.5h.01M3.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M2.5 11.5h.01M3.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M2.5 12.5h.01M3.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-circleCheck" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M6.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-circleDots" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-circleBlock" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-circlePlay" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-arrowDown" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-arrowUp" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-arrowLeft" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-arrowRight" viewBox="0 0 16 16"><path d="M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-burger" viewBox="0 0 16 16"><path d="M4.5 0.5h.01M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M10.5 0.5h.01M11.5 0.5h.01M2.5 1.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M13.5 1.5h.01M1.5 2.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M14.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M0.5 4.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M15.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 8.5h.01M1.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M2.5 9.5h.01M3.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M0.5 12.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M15.5 12.5h.01M0.5 13.5h.01M1.5 13.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M14.5 13.5h.01M15.5 13.5h.01M1.5 14.5h.01M2.5 14.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M13.5 14.5h.01M14.5 14.5h.01M2.5 15.5h.01M3.5 15.5h.01M4.5 15.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01M11.5 15.5h.01M12.5 15.5h.01M13.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-list" viewBox="0 0 16 16"><path d="M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-file" viewBox="0 0 16 16"><path d="M3.5 0.5h.01M4.5 0.5h.01M5.5 0.5h.01M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M10.5 0.5h.01M2.5 1.5h.01M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M2.5 14.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M13.5 14.5h.01M3.5 15.5h.01M4.5 15.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01M11.5 15.5h.01M12.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-folder" viewBox="0 0 16 16"><path d="M1.5 2.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M0.5 3.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M0.5 4.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M0.5 11.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M15.5 11.5h.01M0.5 12.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M15.5 12.5h.01M1.5 13.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M14.5 13.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-user" viewBox="0 0 16 16"><path d="M6.5 0.5h.01M7.5 0.5h.01M8.5 0.5h.01M9.5 0.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M2.5 14.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M13.5 14.5h.01M3.5 15.5h.01M4.5 15.5h.01M5.5 15.5h.01M6.5 15.5h.01M7.5 15.5h.01M8.5 15.5h.01M9.5 15.5h.01M10.5 15.5h.01M11.5 15.5h.01M12.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-volume" viewBox="0 0 16 16"><path d="M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M12.5 4.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-alarm" viewBox="0 0 16 16"><path d="M2.5 0.5h.01M3.5 0.5h.01M4.5 0.5h.01M11.5 0.5h.01M12.5 0.5h.01M13.5 0.5h.01M1.5 1.5h.01M2.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M13.5 1.5h.01M14.5 1.5h.01M0.5 2.5h.01M1.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M14.5 2.5h.01M15.5 2.5h.01M0.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M15.5 3.5h.01M0.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M15.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M1.5 6.5h.01M2.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M2.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M2.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M2.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M2.5 11.5h.01M3.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M3.5 15.5h.01M4.5 15.5h.01M11.5 15.5h.01M12.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-map" viewBox="0 0 16 16"><path d="M11.5 0.5h.01M12.5 0.5h.01M4.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M13.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M14.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M15.5 3.5h.01M0.5 4.5h.01M1.5 4.5h.01M2.5 4.5h.01M3.5 4.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M15.5 4.5h.01M0.5 5.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M15.5 5.5h.01M0.5 6.5h.01M1.5 6.5h.01M2.5 6.5h.01M3.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M15.5 6.5h.01M0.5 7.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M15.5 7.5h.01M0.5 8.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M15.5 8.5h.01M0.5 9.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M15.5 9.5h.01M0.5 10.5h.01M1.5 10.5h.01M2.5 10.5h.01M3.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M15.5 10.5h.01M0.5 11.5h.01M1.5 11.5h.01M2.5 11.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M12.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M15.5 11.5h.01M0.5 12.5h.01M1.5 12.5h.01M2.5 12.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M15.5 12.5h.01M0.5 13.5h.01M1.5 13.5h.01M2.5 13.5h.01M3.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M14.5 13.5h.01M15.5 13.5h.01M0.5 14.5h.01M1.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M15.5 14.5h.01M0.5 15.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-tag" viewBox="0 0 16 16"><path d="M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M13.5 1.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M14.5 2.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M4.5 4.5h.01M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M12.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M2.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M3.5 11.5h.01M4.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01M11.5 11.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-box" viewBox="0 0 16 16"><path d="M3.5 1.5h.01M4.5 1.5h.01M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M11.5 1.5h.01M12.5 1.5h.01M2.5 2.5h.01M3.5 2.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M1.5 3.5h.01M2.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M1.5 4.5h.01M2.5 4.5h.01M13.5 4.5h.01M14.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M1.5 6.5h.01M2.5 6.5h.01M13.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M2.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M2.5 8.5h.01M13.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M2.5 9.5h.01M13.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M1.5 11.5h.01M2.5 11.5h.01M13.5 11.5h.01M14.5 11.5h.01M1.5 12.5h.01M2.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-undo" viewBox="0 0 16 16"><path d="M5.5 2.5h.01M4.5 3.5h.01M3.5 4.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M3.5 6.5h.01M11.5 6.5h.01M4.5 7.5h.01M12.5 7.5h.01M5.5 8.5h.01M12.5 8.5h.01M12.5 9.5h.01M11.5 10.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-redo" viewBox="0 0 16 16"><path d="M10.5 2.5h.01M11.5 3.5h.01M12.5 4.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M4.5 6.5h.01M12.5 6.5h.01M3.5 7.5h.01M11.5 7.5h.01M3.5 8.5h.01M10.5 8.5h.01M3.5 9.5h.01M4.5 10.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M10.5 11.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-clipboard" viewBox="0 0 16 16"><path d="M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M6.5 2.5h.01M9.5 2.5h.01M3.5 3.5h.01M4.5 3.5h.01M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M3.5 4.5h.01M12.5 4.5h.01M3.5 5.5h.01M12.5 5.5h.01M3.5 6.5h.01M12.5 6.5h.01M3.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M12.5 7.5h.01M3.5 8.5h.01M12.5 8.5h.01M3.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M12.5 9.5h.01M3.5 10.5h.01M12.5 10.5h.01M3.5 11.5h.01M5.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M12.5 11.5h.01M3.5 12.5h.01M12.5 12.5h.01M3.5 13.5h.01M12.5 13.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-palette" viewBox="0 0 16 16"><path d="M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M3.5 3.5h.01M12.5 3.5h.01M2.5 4.5h.01M8.5 4.5h.01M13.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M5.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M1.5 6.5h.01M10.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M4.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M6.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M2.5 11.5h.01M13.5 11.5h.01M3.5 12.5h.01M12.5 12.5h.01M4.5 13.5h.01M5.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-numpad" viewBox="0 0 16 16"><path d="M2.5 2.5h.01M3.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M2.5 3.5h.01M3.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M2.5 7.5h.01M3.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M2.5 8.5h.01M3.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M2.5 12.5h.01M3.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M2.5 13.5h.01M3.5 13.5h.01M7.5 13.5h.01M8.5 13.5h.01M12.5 13.5h.01M13.5 13.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-backspace" viewBox="0 0 16 16"><path d="M5.5 3.5h.01M6.5 3.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M13.5 3.5h.01M14.5 3.5h.01M4.5 4.5h.01M14.5 4.5h.01M3.5 5.5h.01M7.5 5.5h.01M11.5 5.5h.01M14.5 5.5h.01M2.5 6.5h.01M8.5 6.5h.01M10.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M14.5 8.5h.01M2.5 9.5h.01M8.5 9.5h.01M10.5 9.5h.01M14.5 9.5h.01M3.5 10.5h.01M7.5 10.5h.01M11.5 10.5h.01M14.5 10.5h.01M4.5 11.5h.01M14.5 11.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01M8.5 12.5h.01M9.5 12.5h.01M10.5 12.5h.01M11.5 12.5h.01M12.5 12.5h.01M13.5 12.5h.01M14.5 12.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-enter" viewBox="0 0 16 16"><path d="M13.5 3.5h.01M13.5 4.5h.01M13.5 5.5h.01M6.5 6.5h.01M13.5 6.5h.01M5.5 7.5h.01M13.5 7.5h.01M4.5 8.5h.01M13.5 8.5h.01M3.5 9.5h.01M4.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01M4.5 10.5h.01M5.5 11.5h.01M6.5 12.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-shift" viewBox="0 0 16 16"><path d="M8.5 2.5h.01M7.5 3.5h.01M8.5 3.5h.01M9.5 3.5h.01M6.5 4.5h.01M8.5 4.5h.01M10.5 4.5h.01M5.5 5.5h.01M8.5 5.5h.01M11.5 5.5h.01M4.5 6.5h.01M8.5 6.5h.01M12.5 6.5h.01M3.5 7.5h.01M8.5 7.5h.01M13.5 7.5h.01M8.5 8.5h.01M8.5 9.5h.01M8.5 10.5h.01M8.5 11.5h.01M8.5 12.5h.01M8.5 13.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-globe" viewBox="0 0 16 16"><path d="M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M6.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M3.5 3.5h.01M5.5 3.5h.01M10.5 3.5h.01M12.5 3.5h.01M2.5 4.5h.01M5.5 4.5h.01M10.5 4.5h.01M13.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M1.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M4.5 7.5h.01M5.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M10.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M2.5 11.5h.01M5.5 11.5h.01M10.5 11.5h.01M13.5 11.5h.01M3.5 12.5h.01M5.5 12.5h.01M10.5 12.5h.01M12.5 12.5h.01M4.5 13.5h.01M5.5 13.5h.01M6.5 13.5h.01M9.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-copy" viewBox="0 0 16 16"><path d="M5.5 2.5h.01M6.5 2.5h.01M7.5 2.5h.01M8.5 2.5h.01M9.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M12.5 2.5h.01M13.5 2.5h.01M5.5 3.5h.01M13.5 3.5h.01M5.5 4.5h.01M13.5 4.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M13.5 5.5h.01M2.5 6.5h.01M10.5 6.5h.01M13.5 6.5h.01M2.5 7.5h.01M10.5 7.5h.01M13.5 7.5h.01M2.5 8.5h.01M10.5 8.5h.01M13.5 8.5h.01M2.5 9.5h.01M10.5 9.5h.01M13.5 9.5h.01M2.5 10.5h.01M10.5 10.5h.01M13.5 10.5h.01M2.5 11.5h.01M10.5 11.5h.01M2.5 12.5h.01M10.5 12.5h.01M2.5 13.5h.01M10.5 13.5h.01M2.5 14.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-cut" viewBox="0 0 16 16"><path d="M4.5 2.5h.01M11.5 2.5h.01M5.5 3.5h.01M10.5 3.5h.01M5.5 4.5h.01M6.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M6.5 5.5h.01M9.5 5.5h.01M7.5 6.5h.01M8.5 6.5h.01M7.5 7.5h.01M8.5 7.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M6.5 9.5h.01M9.5 9.5h.01M2.5 10.5h.01M3.5 10.5h.01M4.5 10.5h.01M5.5 10.5h.01M6.5 10.5h.01M9.5 10.5h.01M10.5 10.5h.01M11.5 10.5h.01M12.5 10.5h.01M13.5 10.5h.01M2.5 11.5h.01M6.5 11.5h.01M9.5 11.5h.01M13.5 11.5h.01M2.5 12.5h.01M6.5 12.5h.01M9.5 12.5h.01M13.5 12.5h.01M2.5 13.5h.01M6.5 13.5h.01M9.5 13.5h.01M13.5 13.5h.01M2.5 14.5h.01M3.5 14.5h.01M4.5 14.5h.01M5.5 14.5h.01M6.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01M11.5 14.5h.01M12.5 14.5h.01M13.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-select" viewBox="0 0 16 16"><path d="M2.5 2.5h.01M4.5 2.5h.01M6.5 2.5h.01M8.5 2.5h.01M10.5 2.5h.01M12.5 2.5h.01M13.5 3.5h.01M2.5 4.5h.01M13.5 5.5h.01M2.5 6.5h.01M6.5 6.5h.01M7.5 6.5h.01M8.5 6.5h.01M9.5 6.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M9.5 7.5h.01M13.5 7.5h.01M2.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M13.5 9.5h.01M2.5 10.5h.01M13.5 11.5h.01M2.5 12.5h.01M3.5 13.5h.01M5.5 13.5h.01M7.5 13.5h.01M9.5 13.5h.01M11.5 13.5h.01M13.5 13.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-check" viewBox="0 0 16 16"><path d="M13.5 4.5h.01M12.5 5.5h.01M11.5 6.5h.01M10.5 7.5h.01M11.5 7.5h.01M2.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M3.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M4.5 10.5h.01M8.5 10.5h.01M5.5 11.5h.01M7.5 11.5h.01M6.5 12.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-more" viewBox="0 0 16 16"><path d="M1.5 7.5h.01M2.5 7.5h.01M3.5 7.5h.01M6.5 7.5h.01M7.5 7.5h.01M8.5 7.5h.01M11.5 7.5h.01M12.5 7.5h.01M13.5 7.5h.01M1.5 8.5h.01M2.5 8.5h.01M3.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M11.5 8.5h.01M12.5 8.5h.01M13.5 8.5h.01M1.5 9.5h.01M2.5 9.5h.01M3.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M11.5 9.5h.01M12.5 9.5h.01M13.5 9.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-resize" viewBox="0 0 16 16"><path d="M8.5 3.5h.01M9.5 3.5h.01M10.5 3.5h.01M11.5 3.5h.01M12.5 3.5h.01M11.5 4.5h.01M12.5 4.5h.01M10.5 5.5h.01M12.5 5.5h.01M9.5 6.5h.01M12.5 6.5h.01M8.5 7.5h.01M12.5 7.5h.01M3.5 8.5h.01M7.5 8.5h.01M3.5 9.5h.01M6.5 9.5h.01M3.5 10.5h.01M5.5 10.5h.01M3.5 11.5h.01M4.5 11.5h.01M3.5 12.5h.01M4.5 12.5h.01M5.5 12.5h.01M6.5 12.5h.01M7.5 12.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-smile" viewBox="0 0 16 16"><path d="M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M3.5 3.5h.01M12.5 3.5h.01M2.5 4.5h.01M13.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M1.5 6.5h.01M5.5 6.5h.01M10.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M4.5 9.5h.01M11.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M5.5 10.5h.01M10.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M2.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M13.5 11.5h.01M3.5 12.5h.01M12.5 12.5h.01M4.5 13.5h.01M5.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-wink" viewBox="0 0 16 16"><path d="M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M3.5 3.5h.01M12.5 3.5h.01M2.5 4.5h.01M13.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M1.5 6.5h.01M5.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M4.5 9.5h.01M11.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M5.5 10.5h.01M10.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M2.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M13.5 11.5h.01M3.5 12.5h.01M12.5 12.5h.01M4.5 13.5h.01M5.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-grin" viewBox="0 0 16 16"><path d="M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M3.5 3.5h.01M12.5 3.5h.01M2.5 4.5h.01M13.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M5.5 5.5h.01M10.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M1.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M4.5 8.5h.01M5.5 8.5h.01M6.5 8.5h.01M7.5 8.5h.01M8.5 8.5h.01M9.5 8.5h.01M10.5 8.5h.01M11.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M5.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M10.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M6.5 10.5h.01M7.5 10.5h.01M8.5 10.5h.01M9.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M2.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M13.5 11.5h.01M3.5 12.5h.01M12.5 12.5h.01M4.5 13.5h.01M5.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-sad" viewBox="0 0 16 16"><path d="M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M3.5 3.5h.01M12.5 3.5h.01M2.5 4.5h.01M13.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M1.5 6.5h.01M5.5 6.5h.01M10.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M6.5 9.5h.01M7.5 9.5h.01M8.5 9.5h.01M9.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M5.5 10.5h.01M10.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M2.5 11.5h.01M4.5 11.5h.01M11.5 11.5h.01M13.5 11.5h.01M3.5 12.5h.01M12.5 12.5h.01M4.5 13.5h.01M5.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-cool" viewBox="0 0 16 16"><path d="M5.5 1.5h.01M6.5 1.5h.01M7.5 1.5h.01M8.5 1.5h.01M9.5 1.5h.01M10.5 1.5h.01M4.5 2.5h.01M5.5 2.5h.01M10.5 2.5h.01M11.5 2.5h.01M3.5 3.5h.01M12.5 3.5h.01M2.5 4.5h.01M13.5 4.5h.01M1.5 5.5h.01M2.5 5.5h.01M3.5 5.5h.01M4.5 5.5h.01M5.5 5.5h.01M6.5 5.5h.01M7.5 5.5h.01M8.5 5.5h.01M9.5 5.5h.01M10.5 5.5h.01M11.5 5.5h.01M12.5 5.5h.01M13.5 5.5h.01M14.5 5.5h.01M1.5 6.5h.01M3.5 6.5h.01M4.5 6.5h.01M5.5 6.5h.01M6.5 6.5h.01M9.5 6.5h.01M10.5 6.5h.01M11.5 6.5h.01M12.5 6.5h.01M14.5 6.5h.01M1.5 7.5h.01M14.5 7.5h.01M1.5 8.5h.01M14.5 8.5h.01M1.5 9.5h.01M14.5 9.5h.01M1.5 10.5h.01M2.5 10.5h.01M5.5 10.5h.01M10.5 10.5h.01M13.5 10.5h.01M14.5 10.5h.01M2.5 11.5h.01M6.5 11.5h.01M7.5 11.5h.01M8.5 11.5h.01M9.5 11.5h.01M13.5 11.5h.01M3.5 12.5h.01M12.5 12.5h.01M4.5 13.5h.01M5.5 13.5h.01M10.5 13.5h.01M11.5 13.5h.01M5.5 14.5h.01M6.5 14.5h.01M7.5 14.5h.01M8.5 14.5h.01M9.5 14.5h.01M10.5 14.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-caret" viewBox="0 0 16 16"><path d="M8.5 5.5h.01M7.5 6.5h.01M9.5 6.5h.01M6.5 7.5h.01M10.5 7.5h.01M5.5 8.5h.01M11.5 8.5h.01M4.5 9.5h.01M12.5 9.5h.01M3.5 10.5h.01M13.5 10.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-caret2" viewBox="0 0 16 16"><path d="M8.5 2.5h.01M7.5 3.5h.01M9.5 3.5h.01M6.5 4.5h.01M10.5 4.5h.01M5.5 5.5h.01M11.5 5.5h.01M4.5 6.5h.01M12.5 6.5h.01M3.5 7.5h.01M8.5 7.5h.01M13.5 7.5h.01M7.5 8.5h.01M9.5 8.5h.01M6.5 9.5h.01M10.5 9.5h.01M5.5 10.5h.01M11.5 10.5h.01M4.5 11.5h.01M12.5 11.5h.01M3.5 12.5h.01M13.5 12.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol><symbol id="d-external" viewBox="0 0 16 16"><path d="M5.5 4.5h.01M6.5 4.5h.01M7.5 4.5h.01M8.5 4.5h.01M9.5 4.5h.01M10.5 4.5h.01M11.5 4.5h.01M10.5 5.5h.01M11.5 5.5h.01M9.5 6.5h.01M11.5 6.5h.01M8.5 7.5h.01M11.5 7.5h.01M7.5 8.5h.01M11.5 8.5h.01M6.5 9.5h.01M11.5 9.5h.01M5.5 10.5h.01M11.5 10.5h.01M4.5 11.5h.01" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/></symbol></defs></svg>
+<div class="wrap">
+<div class="dock">
+  <a class="gl brand" href="#" aria-label="Orbit Board, back to top"><i></i><span>Orbit Board</span></a>
+  <div class="gl pill" role="navigation" aria-label="Sections">
+    <ul id="dock-list">
+      <li data-t="try"><a href="#try">Try</a></li>
+      <li data-t="custom"><a href="#custom">Customize</a></li>
+      <li class="hide-sm" data-t="palette"><a href="#palette">Palette</a></li>
+      <li data-t="features"><a href="#features">Features</a></li>
+      <li data-t="ci"><a href="#ci">CI</a></li>
+    </ul>
+  </div>
+  <button class="gl mode" id="tg" type="button" aria-label="Toggle light and dark theme"></button>
+</div>
+<span class="effect filter" aria-hidden="true"></span>
+<span class="effect text active hidden" aria-hidden="true"></span>
+
+<header class="hero">
+  <span class="tag"><b></b><span id="ver">latest stable</span> · Android 7–15</span>
+  <h1>ORBIT<br><span>BOARD</span></h1>
+  <p class="lead">A privacy-first Android keyboard with a Nothing OS and Bauhaus design language. Dot-matrix type, matte colour, native Bengali typing, on-device prediction and voice, and no analytics or ads.</p>
+  <div class="btns">
+    <a class="b p" id="a-arm" href="https://github.com/fahitakrim/Orbit-Board/releases/latest"><svg class="di"><use href="#d-arrowDown"/></svg> ARM64 APK</a>
+    <a class="b g" id="a-uni" href="https://github.com/fahitakrim/Orbit-Board/releases/latest"><svg class="di"><use href="#d-arrowDown"/></svg> Universal APK</a>
+    <a class="b g" id="a-gh" href="https://github.com/fahitakrim/Orbit-Board">GitHub <svg class="di"><use href="#d-external"/></svg></a>
+  </div>
+</header>
+
+
+<section id="try">
+  <div class="sh"><h2>The real look</h2><span>01 / Try 13 themes</span></div>
+  <div class="try">
+  <aside class="tips">
+    <p class="note" style="margin:0 0 16px">How to use the demo</p>
+    <ol>
+      <li><span><b>Swipe the space bar</b> left or right to switch English, প্রভাত (Probhat) and অভ্র (Avro). Hold it for the language list.</span></li>
+      <li><span><b>Hold a key</b> for its variants, then slide onto one and release. Try র, ক or ন in Probhat.</span></li>
+      <li><span><b>Type in Avro:</b> switch to অভ্র and write <code>ami bhalo achi</code>. Tap a suggestion to complete a word.</span></li>
+      <li><span><b>Toolbar:</b> clipboard, text editing, settings, theme and voice. ?123 opens the symbol pages.</span></li>
+      <li class="pc-only"><span><b>On a computer</b> type on your real keyboard. Ctrl+Z / Y undo and redo, Ctrl+A / C / V select, copy, paste. Esc closes panels.</span></li>
+    </ol>
+  </aside>
+  <div class="stage">
+  <div class="chips" id="chips"></div>
+  <div class="dev" id="dev">
+    <div class="scr"><small id="lang">ENGLISH</small><span id="out"></span><em></em></div>
+    <div class="sg" id="sg"><button class="sb" id="sgc" title="Collapse toolbar" type="button"><svg class="di"><use href="#d-arrowDown"/></svg></button><div class="sgw" id="sgw"></div><button class="sb" id="sgg" title="Next language" type="button"><svg class="di"><use href="#d-globe"/></svg></button><button class="sb" id="sgn" title="Numpad" type="button"><svg class="di"><use href="#d-numpad"/></svg></button></div>
+    <div class="tb" id="tb"><button data-a="more" title="More actions" type="button"><svg class="di"><use href="#d-more"/></svg></button><button data-a="select" title="Select all" type="button"><svg class="di"><use href="#d-select"/></svg></button><button data-a="edit" title="Text editing" type="button"><svg class="di"><use href="#d-pencil"/></svg></button><button data-a="clip" title="Clipboard" type="button"><svg class="di"><use href="#d-clipboard"/></svg></button><button data-a="theme" title="Next theme" type="button"><svg class="di"><use href="#d-palette"/></svg></button><button data-a="set" title="Settings" type="button"><svg class="di"><use href="#d-cog"/></svg></button><button data-a="voice" title="Voice input" type="button"><svg class="di"><use href="#d-microphone"/></svg></button></div>
+    <div class="nr" id="nr"></div>
+    <div class="kb" id="kb"></div>
+    <div class="fx" id="fx"></div>
+    <div class="hint">Swipe the space bar to switch language. Hold a key for variants.</div>
+  </div>
+  </div>
+  </div>
+</section>
+
+<section id="custom">
+  <div class="sh"><h2>Yours to shape</h2><span>02 / Customization</span></div>
+  <div class="man">Made by a user, for users.<br><span>Free. Open source. No profit. Your keyboard, your rules.</span></div>
+  <div class="grid">
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-palette"/></svg></div><h3>13 themes</h3><p>Orbit, Nothing Dark and Light, AMOLED Nothing, Snowfall, Emerald, Deep Sea and more, plus dynamic colour.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-burger"/></svg></div><h3>Your action bar</h3><p>Reorder the toolbar: clipboard, undo, redo, voice, palette. Keep what you use.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-alarm"/></svg></div><h3>Long-press tuning</h3><p>Hold-to-type symbols, plus Ridmik-style C, X and V long-press for copy, cut and paste.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-numpad"/></svg></div><h3>54 layouts</h3><p>QWERTY, Colemak, Dvorak, AZERTY and more, plus Avro, Probhat and Jatiyo for Bengali.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-resize"/></svg></div><h3>Size and mode</h3><p>Adjustable height, one-handed mode and split tablet layout.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-circleBlock"/></svg></div><h3>Your dictionary</h3><p>Word blacklist, personal dictionary and prediction models you manage yourself.</p></div>
+  </div>
+</section>
+
+<section id="live">
+  <div class="sh"><h2>Live from GitHub</h2><span id="ls"><span class="lv"></span>connecting…</span></div>
+  <div class="st">
+    <div class="card"><div class="n" id="m-star">–</div><p>Stars</p></div>
+    <div class="card"><div class="n" id="m-fork">–</div><p>Forks</p></div>
+    <div class="card"><div class="n" id="m-iss">–</div><p>Open issues</p></div>
+    <div class="card"><div class="n r" id="m-push" style="font-size:30px;padding-top:14px">–</div><p>Last push</p></div>
+  </div>
+  <div class="card" style="margin-top:12px"><p style="margin:0 0 6px">Latest release</p><h3 style="margin:0" id="rel-name">–</h3><p id="rel-meta"></p></div>
+</section>
+
+<section>
+  <div class="sh"><h2>By the numbers</h2><span>02 / Specs</span></div>
+  <div class="st">
+    <div class="card"><div class="n r">0</div><p>Analytics, ads or tracking SDKs in the public source (v1.0.8).</p></div>
+    <div class="card"><div class="n">3</div><p>Bengali layouts: Avro, Probhat, Jatiyo.</p></div>
+    <div class="card"><div class="n">3</div><p>Symbol pages: alphabet, numbers, extended math.</p></div>
+    <div class="card"><div class="n">35</div><p>Max API level. Min is 24 (Android 7.0).</p></div>
+  </div>
+</section>
+
+<section id="palette">
+  <div class="sh"><h2>Matte Orbit palette</h2><span>03 / Colour</span></div>
+  <div class="pal">
+    <div class="sw" style="background:#e5252a;color:#fff"><span>Carmine</span><b>#E5252A</b></div>
+    <div class="sw" style="background:#e2b438;color:#000"><span>Ochre</span><b>#E2B438</b></div>
+    <div class="sw" style="background:#2a5288;color:#fff"><span>Cobalt</span><b>#2A5288</b></div>
+    <div class="sw" style="background:#eae6e1;color:#000"><span>Chalk</span><b>#EAE6E1</b></div>
+    <div class="sw" style="background:#000;color:#fff"><span>AMOLED</span><b>#000000</b></div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="sh"><h2>Features</h2><span>04 / Inside</span></div>
+  <div class="grid">
+    <div class="card"><div class="ic">অ</div><h3>Bengali suite</h3><p>Avro phonetic (ami becomes আমি), Probhat with long-press shifts, and Jatiyo with full conjunct support.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-circleDots"/></svg></div><h3>Dynamic bubbles</h3><p>Key previews inherit the tint of the key beneath them, plus the Constellation Web typing animation.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-volume"/></svg></div><h3>Haptic engine</h3><p>Crisp feedback tuned for linear motors.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-pencil"/></svg></div><h3>Gesture typing</h3><p>Glide trace input with real-time word formation.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-clipboard"/></svg></div><h3>Clipboard</h3><p>History with pinned items, one-handed mode, split tablet layout and adjustable height.</p></div>
+    <div class="card"><div class="ic"><svg class="di"><use href="#d-lock-close"/></svg></div><h3>On-device by design</h3><p>Typing, prediction and Whisper voice input run on the device. No analytics SDKs. The only network use found in the public source is the update check against GitHub.</p></div>
+  </div>
+</section>
+
+<section id="ci">
+  <div class="sh"><h2>Build pipeline</h2><span>05 / CI</span></div>
+  <p class="note" id="runs-h">Recent workflow runs</p>
+  <div class="pl" id="runs" style="margin-bottom:34px"><p class="note">loading…</p></div>
+  <p class="note">Pipeline stages (demo)</p>
+  <div class="pl" id="pl"></div>
+  <div class="ctl">
+    <button class="bt" id="run"><svg class="di"><use href="#d-circlePlay"/></svg> Run pipeline</button>
+    <div class="bar" id="bar"></div>
+    <span class="note" id="msg">idle · demo animation of the Gradle build steps</span>
+  </div>
+  <p class="note" style="margin-top:26px">Build locally:</p>
+<pre class="pre" id="clone">git clone https://github.com/fahitakrim/Orbit-Board.git
+cd Orbit-Board
+./gradlew assembleStableRelease</pre>
+  <p class="note" id="repo-note" style="margin-top:12px"></p>
+</section>
+
+<footer>
+  <span>Apache 2.0 · © 2024–2026 Fahim Takrim · Icons: <a href="https://github.com/eduardconstantin/doticons">Doticons</a> (MIT)</span>
+  <span><a id="f-issues" href="https://github.com/fahitakrim/Orbit-Board/issues">Report a bug</a> · <a href="https://github.com/fahitakrim">@fahitakrim</a></span>
+</footer>
+</div>
+
+<script>
+// theme
+const root=document.documentElement;
+const isDark=()=>root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+const tgIcon=()=>{document.getElementById('tg').innerHTML='<svg class="di" aria-hidden="true"><use href="#d-'+(isDark()?'sun':'semiMoon')+'"/></svg>'};
+document.getElementById('tg').onclick=()=>{root.dataset.theme=isDark()?'light':'dark';tgIcon()};
+tgIcon();
+// keyboard
+const out=document.getElementById('out'),kb=document.getElementById('kb'),nr=document.getElementById('nr'),dev=document.getElementById('dev'),fx=document.getElementById('fx'),sgw=document.getElementById('sgw');
+const NCOL=['d','r','b','y','w','d','r','b','w','y'];
+const THEMES=[
+ ['Orbit','#000','#1c1d20','#fff','#c23636','#fff','orbit'],
+ ['Nothing Dark','#000','#1b1a1f','#fff','#d0bcff','#381e72'],
+ ['Nothing Light','#d5d5d5','#f4f4f4','#1b1a1f','#d71921','#fff'],
+ ['AMOLED Nothing','#000','#0e0e0e','#fff','#d0bcff','#381e72'],
+ ['AMOLED Purple','#000','#332d41','#e8def8','#d0bcff','#381e72'],
+ ['Classic Dark','#263238','#34434b','#f0fffe','#80cbc4','#003733'],
+ ['Classic Light','#eceff1','#fff','#00201d','#4db6ac','#fff'],
+ ['Cotton Candy','#ffe4fa','#ffd1f6','#5f395b','#ec5eb4','#fff'],
+ ['Deep Sea','#dbe5f5','#869fc5','#001025','#4062d3','#fff'],
+ ['Emerald','#001a05','#004b03','#99e788','#67fb59','#003a02'],
+ ['Snowfall','#f2f2f2','#fff','#212223','#212223','#fff'],
+ ['Steel Grey','#1d1d1e','#424343','#fff','#b9bdc1','#212223'],
+ ['Sunflower','#fff6d6','#f8e287','#221b00','#6d5e0f','#fff']
+];
+const BG={d:'#1c1d20',r:'#c23636',b:'#2a5288',y:'#e2b438',w:'#eae6e1'},FG={d:'#fff',r:'#fff',b:'#fff',y:'#111',w:'#111'};
+let theme=0;
+function applyTheme(i){
+  theme=i;const [n,bd,kc,kf,ac,fa,mode]=THEMES[i],v=(k,x)=>dev.style.setProperty(k,x);
+  v('--bd',bd);v('--kc',kc);v('--kf',kf);v('--ca',ac);v('--fa',fa);
+  if(mode==='orbit'){
+    v('--cr','#c23636');v('--cb','#2a5288');v('--cy','#e2b438');v('--cw','#eae6e1');v('--cd','#1c1d20');
+    v('--fr','#fff');v('--fb','#fff');v('--fy','#111');v('--fw','#111');v('--fd','#fff');v('--sp','#e2b438');
+  }else{
+    ['--cr','--cb','--cy','--cw','--cd'].forEach(k=>v(k,kc));
+    ['--fr','--fb','--fy','--fw','--fd'].forEach(k=>v(k,kf));v('--sp',ac);
+  }
+  document.querySelectorAll('#chips button').forEach((b,j)=>b.classList.toggle('on',j===i));
+  nr.querySelectorAll('.nb').forEach((e,j)=>{
+    const c=NCOL[j];e.style.background=mode==='orbit'?BG[c]:'color-mix(in srgb,'+kc+' 70%,'+ac+')';
+    e.style.color=mode==='orbit'?FG[c]:kf});
+}
+
+const GCAT=[['smile',['smile','wink','grin','sad','cool','user','heart','stars','thumbsup','check','circleCheck','circleBlock']],
+ ['heart',['heart','stars','thumbsup','bell','bookmark','shield','lock-close','lock-open','circleCheck','circleDots','alarm','tag']],
+ ['sun',['sun','semiMoon','cloud','cat','paw','location','map','volume','box','folder','file','list']],
+ ['camera',['camera','phone','chat','search','microphone','pencil','cog','trash','burger','arrowUp','arrowDown','arrowLeft','arrowRight','close','circlePlay']]];
+let emoTab='smile';
+const ic=n=>'<svg class="di" aria-hidden="true"><use href="#d-'+n+'"/></svg>';
+const esc=t=>t.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const rich=t=>esc(t).replace(/\uE000([\w-]+)\uE001/g,(m,n)=>'<span class="gi">'+ic(n)+'</span>');
+
+const S={particles:true,preview:true,suggest:true,haptic:true};
+try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)S.particles=false}catch(e){}
+const LANGS=[{id:'en',lab:'English',name:'English (United States)',lay:'QWERTY',tag:'ENGLISH'},{id:'bn',lab:'প্রভাত',name:'Bangla (Bangladesh)',lay:'Probhat',tag:'বাংলা · PROBHAT'},{id:'avro',lab:'অভ্র',name:'Bangla (Bangladesh)',lay:'Avro Phonetic',tag:'বাংলা · AVRO'}];
+let li=0,txt='',caps=0,page='alpha',panel=null,sel=false,U=[],R=[],clips=[],ft=null,comp=null,lastShift=0;
+const lang=()=>LANGS[li],langLabel=()=>lang().tag,ID=(e,i)=>(e.dataset.id=i,e);
+const EN=[['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['z','x','c','v','b','n','m']];
+const HINT=[['1','2','3','4','5','6','7','8','9','0'],['@','#','&','+','-','!','?','(',')'],['*','"',"'",':',';',',','/']];
+const COL=[['y','b','d','w','r','b','w','r','y','d'],['w','r','b','d','y','w','r','b','d'],['d','y','w','r','b','d','y']];
+const ACC={a:'àáâä',e:'èéêë',i:'ìíîï',o:'òóôö',u:'ùúûü',c:'ç',n:'ñ',s:'ß'};
+const BN1=['দ','◌ূ','◌ী','র','ট','এ','◌ু','◌ি','ও','প','◌ে','◌ৈ'],H1=['ধ','ঊ','ঈ','ড়','ঠ','ঐ','উ','ই','ঔ','ফ','◌ৗ','◌ঁ'],C1=['d','r','b','r','r','w','r','b','y','w','w','y'];
+const BN2=['◌া','স','ড','ত','গ','হ','জ','ক','ল'],H2=['অ','ষ','ঢ','থ','ঘ','ঃ','ঝ','খ','ং'],C2=['w','d','d','b','y','r','w','r','r'];
+const BN3=['য়','শ','চ','আ','ব','ন','ম','◌়','◌্'],H3=['য','ঢ়','ছ','ঋ','ভ','ণ','ঙ','◌ঁ','ৎ'],C3=['b','y','b','w','d','b','y','w','y'];
+const PMID=[['q','w','e','r','t','y','u','i','o','p','[',']'],['a','s','d','f','g','h','j','k','l'],['z','x','c','v','b','n','m','','']];
+const PM={};[[BN1,H1],[BN2,H2],[BN3,H3]].forEach(([k,h],ri)=>k.forEach((c,ci)=>{const id=PMID[ri][ci];if(id)PM[id]={c:c.replace('◌',''),h:h[ci].replace('◌','')}}));
+const VAR={'র':['র্য','ৰ','র্','ড়','্র'],'ক':['ক্ষ','ক্ক','ক্ত'],'ত':['ত্ত','ৎ','ত্র'],'স':['স্ক','স্ত'],'ন':['ন্ত','ন্দ','ঙ'],'প':['প্র','প্ত'],'দ':['দ্ধ','দ্ব','দ্ম'],'গ':['গ্র','গ্গ'],'ব':['ব্য','ব্ব']};
+const S1=[['%','\\','|','=','[',']','<','>','{','}'],['@','#','৳','%','&','*','−','+','(',')'],['!','"',"'",':',';','/','?']];
+const S1H={'%':'‰','৳':'$','*':'★','+':'=','(':'<',')':'>'};
+const SC=[['y','w','d','b','w','r','r','b','y','d'],['r','b','y','y','r','b','d','y','d','y'],['w','d','y','w','r','w','b']];
+const SYM2=[['~','`','|','•','√','π','÷','×','¶','∆'],['£','¢','€','¥','^','°','=','{','}','\\'],['%','©','®','™','✓','[',']']];
+const SYM3=[['½','⅓','¼','¾','¹','²','³','ⁿ','‰','№'],['«','»','“','”','•','★','†','‡','§','¶'],[':)',';)',':D',':P','-_-','^_^','¯\\_/¯']];
+const R2COL=['w','r','b','d','y','w','r','b','d','y'];
+// dictionaries
+const BW='আমি আমার আমরা আসলে আসে আস আসছে আছে আর আজ আগে এই এখন এটা এবং একটু এক ওই ওটা কি কী কিছু কেমন কেন কোথায় করে করা করব কিন্তু কাল খুব গিয়ে ঘর চলে ছিল জায়গা জায়গায় জন্য ঠিক টা ডানে তুমি তোমার তুই তবে তা থেকে দেখা ধন্যবাদ না নতুন পরে পারি ফলা ফলস বামে বসে বাংলা ভাই ভাইরাস ভালো ভালোবাসা যদি যায় য যেমন যে যা লেখা লীও সাথে সমস্যা সমাধান সেই সেটা হয় হয়না হয়নি হয়ে হবে হ্যাঁ হয়েছে কিবোর্ড ইংরেজি অনেক অথবা অভ্র প্রভাত'.split(' ');
+const EW='a about after all also am an and are as at be because but by can could day do does for from get go good had has have he hello her here hi him his how i if in is it just keyboard know like love me my no not now of ok on one or orbit our out people please see she so some than thank thanks that the their them then there they this time to up us very want was we well what when where which who will with would yes you your'.split(' ');
+const NX={'আমি':['ভালো','তোমাকে','এখন'],'ভাই':['আমি','এটা','ঠিক'],'আর':['ভাই','না','একটু'],'এটা':['ঠিক','কেমন','হবে'],'তুমি':['কেমন','কি','কোথায়'],'কেমন':['আছো','আছেন','হয়'],'I':['am','will','have'],'the':['same','best','keyboard'],'you':['are','can','know'],'how':['are','do','is'],'thank':['you','god','me'],'good':['morning','night','luck']};
+// Avro phonetic (simplified)
+const AV=[['rri','v','ঋ','ৃ'],['OU','v','ঔ','ৌ'],['OI','v','ঐ','ৈ'],['ou','v','ঔ','ৌ'],['oi','v','ঐ','ৈ'],['ii','v','ঈ','ী'],['uu','v','ঊ','ূ'],['o','v','অ',''],['a','v','আ','া'],['i','v','ই','ি'],['I','v','ঈ','ী'],['u','v','উ','ু'],['U','v','ঊ','ূ'],['e','v','এ','ে'],['O','v','ও','ো'],
+ ['t``','m','ৎ'],['ng','m','ং'],[':','m','ঃ'],['^','m','ঁ']];
+const AC={kh:'খ',gh:'ঘ',Ng:'ঙ',ch:'ছ',jh:'ঝ',NG:'ঞ',Th:'ঠ',Dh:'ঢ',th:'থ',dh:'ধ',ph:'ফ',bh:'ভ',sh:'শ',Sh:'ষ',Rh:'ঢ়',k:'ক',g:'গ',c:'চ',j:'জ',T:'ট',D:'ড',N:'ণ',t:'ত',d:'দ',n:'ন',p:'প',f:'ফ',b:'ব',v:'ভ',m:'ম',z:'য',r:'র',l:'ল',S:'শ',s:'স',h:'হ',R:'ড়',y:'য়',Y:'য়',q:'ক',w:'ও',x:'ক্স'};
+const TOK=AV.concat(Object.keys(AC).map(k=>[k,'c',AC[k]])).sort((a,b)=>b[0].length-a[0].length);
+function avro(s){
+  let o='',pc=false,i=0;
+  while(i<s.length){
+    const h=TOK.find(t=>s.startsWith(t[0],i));
+    if(!h){const ch=s[i++];o+=/\d/.test(ch)?'০১২৩৪৫৬৭৮৯'[+ch]:ch==='.'?'।':ch;pc=false;continue}
+    i+=h[0].length;
+    if(h[1]==='v'){if(pc){if(h[0]==='o'){if(i>=s.length)o+='ো'}else o+=h[3]}else o+=h[2];pc=false}
+    else if(h[1]==='c'){if(pc)o+='্';o+=h[2];pc=true}
+    else{o+=h[2];pc=false}
+  }
+  return o;
+}
+// core
+function flash(m){const l=document.getElementById('lang');l.textContent=m;clearTimeout(ft);ft=setTimeout(()=>{l.textContent=langLabel()},1300)}
+function suggestions(){
+  const m=txt.match(/([A-Za-z'\u0980-\u09FF]+)$/),p=m?m[1]:'',bnm=lang().id!=='en';
+  const dict=(p?/[\u0980-\u09FF]/.test(p):bnm)?BW:EW;
+  if(p){const r=dict.filter(w=>w.startsWith(p)&&w!==p).slice(0,3);return r.length?r:[p]}
+  const pm=txt.match(/([A-Za-z'\u0980-\u09FF]+)\s$/);
+  return (pm&&NX[pm[1]])||(bnm?['আমি','এই','না']:['I','the','you']);
+}
+function pick(w){const m=txt.match(/([A-Za-z'\u0980-\u09FF]+)$/);comp=null;setT((m&&!sel?txt.slice(0,-m[1].length):(sel?'':txt))+w+' ')}
+function renderSg(){
+  const l=(S.suggest&&page==='alpha'&&!panel)?suggestions():[];sgw.innerHTML='';
+  [l[1],l[0],l[2]].forEach((w,i)=>{const b=document.createElement('button');b.type='button';b.className='sgb'+(i===1?' mid':'');b.textContent=w||'';b.tabIndex=-1;b.onmousedown=e=>e.preventDefault();b.onclick=()=>{if(w)pick(w)};sgw.appendChild(b)});
+}
+function paint(){
+  const parts=txt.match(/\uE000[\w-]+\uE001|[\s\S]/g)||[];
+  out.innerHTML=txt?rich(parts.slice(-20).join('')):'ORBIT';
+  out.style.opacity=txt?1:.35;out.style.background=sel?'color-mix(in srgb,var(--ca) 45%,transparent)':'none';
+  renderSg();
+}
+function setT(n){if(n===txt)return;U.push(txt);R=[];txt=n;sel=false;paint()}
+function add(c){comp=null;setT((sel?'':txt)+c.replace('◌',''))}
+function typeAvro(ch){if(!comp)comp={base:sel?'':txt,buf:''};comp.buf+=ch;setT(comp.base+avro(comp.buf))}
+function del(){
+  if(sel){comp=null;return setT('')}
+  if(comp){comp.buf=comp.buf.slice(0,-1);if(!comp.buf){setT(comp.base);comp=null}else setT(comp.base+avro(comp.buf));return}
+  const m=txt.match(/\uE000[\w-]+\uE001$/);setT(m?txt.slice(0,-m[0].length):txt.slice(0,-1));
+}
+function undo(){if(!U.length)return flash('NOTHING TO UNDO');comp=null;R.push(txt);txt=U.pop();sel=false;paint()}
+function redo(){if(!R.length)return flash('NOTHING TO REDO');comp=null;U.push(txt);txt=R.pop();sel=false;paint()}
+function copy(){if(!txt)return flash('NOTHING TO COPY');clips=clips.filter(c=>c.t!==txt);clips.unshift({t:txt,p:false});clips.sort((a,b)=>b.p-a.p);flash('COPIED')}
+function paste(){if(!clips.length)return flash('CLIPBOARD EMPTY');add(clips[0].t)}
+function buzz(){if(S.haptic&&navigator.vibrate)try{navigator.vibrate(8)}catch(e){}}
+function hidePops(){fx.querySelectorAll('.lp,.vp,.bub').forEach(e=>e.remove())}
+function burst(e){
+  if(!S.particles||!Element.prototype.animate||e.clientX==null)return;
+  const d=dev.getBoundingClientRect(),x=e.clientX-d.left,y=e.clientY-d.top,cs=['#c23636','#2a5288','#eae6e1','#e2b438'];
+  for(let i=0;i<8;i++){const p=document.createElement('i');p.className='pt';p.style.left=x+'px';p.style.top=y+'px';p.style.background=cs[i%4];fx.appendChild(p);
+    const a=Math.random()*6.28,r=16+Math.random()*28;
+    p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate('+Math.cos(a)*r+'px,'+Math.sin(a)*r+'px) scale(.3)',opacity:0}],{duration:520,easing:'ease-out'}).onfinish=()=>p.remove()}
+}
+function showBubble(b){
+  const e=fx.querySelector('.bub');if(e)e.remove();
+  const t=b.firstChild&&b.firstChild.nodeType===3?b.firstChild.textContent:'';if(!t)return;
+  const r=b.getBoundingClientRect(),d=dev.getBoundingClientRect(),cs=getComputedStyle(b),n=document.createElement('div');
+  n.className='bub';n.textContent=t;n.style.background=cs.backgroundColor;n.style.color=cs.color;
+  n.style.left=(r.left-d.left+r.width/2)+'px';n.style.top=(r.top-d.top-56)+'px';fx.appendChild(n);
+}
+function showVars(b,list){
+  const r=b.getBoundingClientRect(),d=dev.getBoundingClientRect(),vp=document.createElement('div'),cc=['y','b','d','w','r','b'];
+  vp.className='vp';let cur=null;
+  list.slice(0,6).forEach((v,i)=>{const t=document.createElement('div');t.className='vt';t.dataset.v=v;t.textContent=v.replace('◌','');
+    t.style.background='var(--c'+cc[i]+')';t.style.color='var(--f'+cc[i]+')';if(i===1||(list.length===1&&i===0)){t.classList.add('on');cur=t}vp.appendChild(t)});
+  const rows=Math.ceil(Math.min(list.length,6)/3);
+  vp.style.left=Math.min(Math.max(r.left-d.left+r.width/2,100),d.width-100)+'px';vp.style.top=(r.top-d.top-rows*51-12)+'px';fx.appendChild(vp);
+  const mv=e=>{const t=document.elementFromPoint&&document.elementFromPoint(e.clientX,e.clientY);if(t&&t.dataset&&t.dataset.v!==undefined){cur&&cur.classList.remove('on');cur=t;t.classList.add('on')}};
+  const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);const v=cur&&cur.dataset.v;vp.remove();if(v)add(v)};
+  addEventListener('pointermove',mv);addEventListener('pointerup',up);
+}
+function mk(label,cls,span,main,hint,start,o){
+  o=o||{};
+  const b=document.createElement('button');b.type='button';b.className='k '+cls;
+  if(label.startsWith('ic:'))b.innerHTML=ic(label.slice(3));else b.textContent=label;
+  b.style.gridColumn=(start?start+' / ':'')+'span '+span;
+  if(hint){const u=document.createElement('sup');if(hint==='mic')u.innerHTML=ic('microphone');else u.textContent=hint.replace('◌','');b.appendChild(u)}
+  let t=null,fired=false;
+  b.onpointerdown=e=>{
+    fired=false;buzz();burst(e);if(S.preview&&o.prev)showBubble(b);
+    const list=o.vars||(hint&&hint!=='mic'?[hint]:null);
+    if(o.lp&&hint)t=setTimeout(()=>{fired=true;hideBubble();o.lp()},380);
+    else if(list)t=setTimeout(()=>{fired=true;hideBubble();showVars(b,[o.ch||label].concat(list))},380);
+  };
+  const hideBubble=()=>{const e=fx.querySelector('.bub');if(e)e.remove()};
+  b.onpointerup=()=>{clearTimeout(t);hideBubble();if(!fired)main()};
+  b.onpointerleave=b.onpointercancel=()=>{clearTimeout(t);hideBubble()};
+  b.oncontextmenu=e=>e.preventDefault();b.tabIndex=-1;b.onmousedown=e=>e.preventDefault();
+  return b;
+}
+const cols=()=>(!panel&&page==='alpha'&&lang().id==='bn')?24:20;
+function row(){const d=document.createElement('div');d.className='row';d.style.gridTemplateColumns='repeat('+cols()+',minmax(0,1fr))';kb.appendChild(d);return d}
+function shiftTap(){const n=Date.now();if(caps===2)caps=0;else if(caps===1&&n-lastShift<450)caps=2;else caps=caps?0:1;lastShift=n;render()}
+function shiftKey(){return ID(mk(caps===2?'ic:caret2':'ic:caret','y sm'+(caps===1?' on1':''),3,shiftTap),'Shift')}
+function letter(c,up){
+  const L=lang().id,u=up||caps>0;
+  if(L==='bn'){const p=PM[c];if(p)add(u&&p.h?p.h:p.c)}
+  else if(L==='avro')typeAvro(u?c.toUpperCase():c);
+  else add(u?c.toUpperCase():c);
+  if(caps===1){caps=0;render()}
+}
+function render(){
+  kb.innerHTML='';nr.innerHTML='';hidePops();
+  document.querySelectorAll('#tb button').forEach(b=>b.classList.toggle('on',b.dataset.a===panel));
+  document.getElementById('lang').textContent=langLabel();
+  if(panel){nr.style.display='none';renderPanel();paint();return}
+  nr.style.display='grid';
+  const L=lang().id,bnd=L!=='en',D='১২৩৪৫৬৭৮৯০';
+  NCOL.forEach((c,i)=>{const ch=bnd?D[i]:String((i+1)%10),b=document.createElement('button');b.type='button';b.className='nb';b.textContent=ch;b.tabIndex=-1;
+    b.onmousedown=e=>e.preventDefault();b.onpointerdown=e=>{buzz();burst(e)};b.onclick=()=>add(ch);nr.appendChild(b)});
+  if(page==='alpha'){
+    if(L==='bn'){
+      [[BN1,H1,C1],[BN2,H2,C2],[BN3,H3,C3]].forEach(([ks,hs,cs],ri)=>{
+        const d=row();if(ri===2)d.appendChild(shiftKey());
+        ks.forEach((c,ci)=>{const lab=caps&&hs[ci]?hs[ci]:c,k=mk(lab,cs[ci],2,()=>{add(lab);if(caps===1){caps=0;render()}},hs[ci],ri===1&&ci===0?4:0,{vars:VAR[c],ch:lab,prev:true});
+          k.dataset.id=PMID[ri][ci]||'';d.appendChild(k)});
+        if(ri===2)d.appendChild(ID(mk('ic:backspace','w sm',3,del),'Backspace'));
+      });
+    }else{
+      EN.forEach((r,ri)=>{
+        const d=row();if(ri===2)d.appendChild(shiftKey());
+        r.forEach((c,ci)=>{const lab=caps?c.toUpperCase():c,vars=(L==='en'&&ACC[c])?[HINT[ri][ci]].concat([...ACC[c]]):null;
+          const k=mk(lab,COL[ri][ci],2,()=>letter(c),HINT[ri][ci],ri===1&&ci===0?2:0,{vars,ch:lab,prev:true});k.dataset.id=c;d.appendChild(k)});
+        if(ri===2)d.appendChild(ID(mk('ic:backspace','w sm',3,del),'Backspace'));
+      });
+    }
+  }else{
+    const rows=page==='s1'?S1:page==='s2'?SYM2:SYM3;
+    rows.forEach((r,ri)=>{
+      const d=row();
+      if(ri===2){if(page==='s1')d.appendChild(mk('=\\<','y sm',3,()=>{page='s2';render()},'½',0,{lp:()=>{page='s3';render()}}));else d.appendChild(mk('?123','y sm',3,()=>{page='s1';render()}))}
+      r.forEach((c,ci)=>{const lab=(c==='৳'&&L==='en')?'$':c,col=page==='s1'?SC[ri][ci]:(ri===0?COL[0][ci]:ri===1?R2COL[ci]:COL[2][ci]);
+        const k=mk(lab,col+(lab.length>2?' sm':''),2,()=>add(lab),page==='s1'?S1H[c]:'',0,{vars:null,ch:lab});k.dataset.id=lab;d.appendChild(k)});
+      if(ri===2)d.appendChild(ID(mk('ic:backspace','w sm',3,del),'Backspace'));
+    });
+  }
+  bottom();paint();applyTheme(theme);
+}
+function spaceBubble(b,show){
+  let n=fx.querySelector('.bub');
+  if(show===false){if(n)n.remove();return}
+  if(!S.preview)return;
+  if(!n){
+    n=document.createElement('div');n.className='bub sp';fx.appendChild(n);
+    const r=b.getBoundingClientRect(),d=dev.getBoundingClientRect(),cs=getComputedStyle(b);
+    n.style.left=Math.min(Math.max(r.left-d.left+r.width/2,90),Math.max(d.width-90,90))+'px';
+    n.style.top=(r.top-d.top-70)+'px';n.style.background=cs.backgroundColor;n.style.color=cs.color;
+  }
+  n.innerHTML='<b>'+lang().lab+'</b><small>'+lang().lay+'</small>';
+}
+function spaceKey(span){
+  const b=document.createElement('button');b.type='button';b.className='k w sp';b.style.gridColumn='span '+span;b.dataset.id=' ';b.tabIndex=-1;
+  const lbl=()=>'◄ '+lang().lab+' ►';b.textContent=lbl();
+  let sx=null,moved=false,t=null,fired=false;
+  b.onmousedown=e=>e.preventDefault();
+  b.onpointerdown=e=>{sx=e.clientX;moved=false;fired=false;buzz();burst(e);spaceBubble(b);try{b.setPointerCapture(e.pointerId)}catch(_){}
+    t=setTimeout(()=>{if(!moved){fired=true;langPopup()}},550)};
+  b.onpointermove=e=>{if(sx===null)return;const dx=e.clientX-sx;
+    if(Math.abs(dx)>=28){moved=true;clearTimeout(t);li=(li+(dx>0?1:-1)+LANGS.length)%LANGS.length;sx=e.clientX;b.textContent=lbl();flash(langLabel());spaceBubble(b);buzz()}};
+  b.onpointerup=()=>{clearTimeout(t);spaceBubble(b,false);const m=moved;sx=null;moved=false;if(m){page='alpha';comp=null;caps=0;render()}else if(!fired)add(' ')};
+  b.onpointercancel=()=>{clearTimeout(t);spaceBubble(b,false);sx=null};
+  return b;
+}
+function langPopup(){
+  hidePops();const p=document.createElement('div');p.className='lp';p.innerHTML='<h5>Select language</h5>';
+  LANGS.forEach((l,i)=>{const it=document.createElement('button');it.type='button';it.className='it'+(i===li?' on':'');
+    it.innerHTML='<span>'+l.lab+'<small>'+l.name+' · '+l.lay+'</small></span>'+ic('arrowRight');it.onclick=()=>{li=i;page='alpha';comp=null;caps=0;p.remove();render()};p.appendChild(it)});
+  const a=document.createElement('div');a.className='ac';
+  [['Switch Keyboard','SWITCH KEYBOARD'],['Languages','LANGUAGES']].forEach(([n,m])=>{const bt=document.createElement('button');bt.type='button';bt.textContent=n;bt.onclick=()=>{p.remove();flash(m)};a.appendChild(bt)});
+  p.appendChild(a);fx.appendChild(p);
+  const off=e=>{if(!p.contains(e.target)){p.remove();removeEventListener('pointerdown',off,true)}};setTimeout(()=>addEventListener('pointerdown',off,true),0);
+}
+function bottom(){
+  const l=row(),alpha=page==='alpha',L=lang().id,w=cols()===24;
+  l.append(mk(alpha?'?123':(L==='bn'?'অকখ':'ABC'),'a sm',3,()=>{page=alpha?'s1':'alpha';render()}),
+    mk('ic:smile','b',w?3:2,()=>{panel='emoji';render()}),
+    ID(mk(',','w',2,()=>add(','),'mic',0,{lp:()=>{panel='voice';render()}}),','),
+    spaceKey(w?9:8),
+    ID(mk(L==='en'?'.':'।','d',w?3:2,()=>add(L==='en'?'.':'।')),'.'),
+    ID(mk('ic:enter','a',w?4:3,()=>add('\n')),'\n'));
+}
+function el(t,c,x,f){const e=document.createElement(t);e.className=c||'';if(x!=null)e.textContent=x;if(f)e.onclick=f;return e}
+function close(){panel=null;render()}
+function pbar(extra){
+  const l=row();l.append(mk('ABC','a sm',5,close));if(extra)l.append(extra);
+  const b=ID(mk('ic:backspace','w sm',5,del),'Backspace');b.style.gridColumn='16 / span 5';l.append(b);
+}
+function tiles(list,cols){
+  const g=el('div','tiles');g.style.gridTemplateColumns='repeat(' + cols + ',1fr)';
+  list.forEach(([i,n,f])=>{const t=el('button','tile');t.type='button';const bb=el('b');bb.innerHTML=ic(i);t.append(bb,el('span','',n));t.onclick=f;g.appendChild(t)});
+  kb.appendChild(g);
+}
+function renderPanel(){
+  if(panel==='emoji'){
+    const t=el('div','etabs');GCAT.forEach(([k])=>{const b=el('button',k===emoTab?'on':'','',()=>{emoTab=k;render()});b.innerHTML=ic(k);b.type='button';t.appendChild(b)});kb.appendChild(t);
+    const g=el('div','gg');GCAT.find(c=>c[0]===emoTab)[1].forEach(n=>{const b=el('button','','',()=>add('\uE000'+n+'\uE001'));b.innerHTML=ic(n);b.type='button';g.appendChild(b)});kb.appendChild(g);pbar();
+  }else if(panel==='clip'){
+    kb.appendChild(el('div','ph','Clipboard history'));
+    const l=el('div','cl');
+    if(!clips.length)l.appendChild(el('div','ci mute','Nothing copied yet. Open Text editing and tap Copy.'));
+    clips.forEach((c,i)=>{const r=el('div','ci');const ct=el('span','ct','',()=>{add(c.t);close()});ct.innerHTML=rich(c.t);r.appendChild(ct);
+      const p=el('button',c.p?'':'off','',()=>{c.p=!c.p;clips.sort((a,b)=>b.p-a.p);render()});p.innerHTML=ic('bookmark');
+      const x=el('button','','',()=>{clips.splice(i,1);render()});x.innerHTML=ic('close');p.type=x.type='button';r.append(p,x);l.appendChild(r)});
+    kb.appendChild(l);pbar();
+  }else if(panel==='edit'){
+    kb.appendChild(el('div','ph','Text editing'));
+    tiles([['select','Select all',()=>{if(txt){sel=true;paint()}}],['copy','Copy',copy],['cut','Cut',()=>{copy();if(txt)setT('')}],['clipboard','Paste',paste],['undo','Undo',undo],['redo','Redo',redo]],3);pbar();
+  }else if(panel==='num'){
+    const g=el('div','num');
+    [['1','2','3','-'],['4','5','6','.'],['7','8','9',','],['+','0','#','⌫']].forEach(r=>r.forEach(c=>{const b=el('button','',c==='⌫'?'':c,()=>c==='⌫'?del():add(c));if(c==='⌫')b.innerHTML=ic('backspace');b.type='button';g.appendChild(b)}));
+    kb.appendChild(g);pbar();
+  }else if(panel==='more'){
+    kb.appendChild(el('div','ph','More actions'));
+    tiles([['clipboard','Clipboard',()=>{panel='clip';render()}],['pencil','Text edit',()=>{panel='edit';render()}],['smile','Icons',()=>{panel='emoji';render()}],['numpad','Numpad',()=>{panel='num';render()}],
+      ['microphone','Voice',()=>{panel='voice';render()}],['palette','Theme',()=>{applyTheme((theme+1)%THEMES.length);flash(THEMES[theme][0].toUpperCase())}],['undo','Undo',undo],['redo','Redo',redo]],4);pbar();
+  }else if(panel==='set'){
+    kb.appendChild(el('div','ph','Settings'));
+    const T=[['particles','stars','Particles'],['preview','circleDots','Key preview'],['suggest','list','Suggestions'],['haptic','volume','Haptics']];
+    tiles(T.map(([k,i,n])=>[i,n+' '+(S[k]?'ON':'OFF'),()=>{S[k]=!S[k];render()}]),4);pbar();
+  }else if(panel==='voice'){
+    const v=el('div','voice');v.innerHTML=''+ic('microphone')+'<div class="vr"><i></i><i></i><i></i></div><p>Listening…</p><small>Demo only. In the app, voice typing runs on-device with Whisper.</small>';kb.appendChild(v);pbar();
+  }
+}
+
+function act(a){
+  if(a==='undo')return undo();if(a==='redo')return redo();
+  if(a==='select'){if(txt){sel=true;paint();flash('SELECTED')}else flash('NOTHING TO SELECT');return}
+  if(a==='theme'){applyTheme((theme+1)%THEMES.length);return flash(THEMES[theme][0].toUpperCase())}
+  panel=panel===a?null:a;render();
+}
+document.querySelectorAll('#tb button').forEach(b=>{b.onmousedown=e=>e.preventDefault();b.onclick=()=>act(b.dataset.a)});
+document.getElementById('sgc').onclick=()=>{const t=document.getElementById('tb');t.style.display=t.style.display==='none'?'flex':'none'};
+document.getElementById('sgg').onclick=()=>{li=(li+1)%LANGS.length;page='alpha';comp=null;caps=0;render();flash(langLabel())};
+document.getElementById('sgn').onclick=()=>act('num');
+document.querySelectorAll('.sb').forEach(b=>b.onmousedown=e=>e.preventDefault());
+const chips=document.getElementById('chips');
+THEMES.forEach((t,i)=>{const b=document.createElement('button');b.type='button';
+  b.innerHTML='<i style="background:linear-gradient(135deg,'+t[1]+' 50%,'+t[4]+' 50%)"></i>'+t[0];
+  b.onclick=()=>applyTheme(i);chips.appendChild(b)});
+render();applyTheme(0);paint();
+// physical keyboard
+const held={},allK=()=>[...kb.querySelectorAll('.k')],kel=id=>allK().find(k=>k.dataset.id===id);
+const hintEl=ch=>allK().find(k=>{const u=k.querySelector('sup');return u&&u.textContent===ch});
+function lit(code,el){if(!el)return;el.classList.add('on');held[code]=el}
+addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey){
+    const k=e.key.toLowerCase();
+    if(k==='z'){e.preventDefault();e.shiftKey?redo():undo()}
+    else if(k==='y'){e.preventDefault();redo()}
+    else if(k==='a'){e.preventDefault();if(txt){sel=true;paint()}}
+    else if(k==='v'){e.preventDefault();paste()}
+    else if(k==='c'&&txt){copy()}
+    return;
+  }
+  if(e.altKey)return;
+  const key=e.key;let el=null;
+  if(key==='Escape'){if(panel)panel=null,render();else hidePops();return}
+  if(key==='Shift'){lit(e.code,kel('Shift'));return}
+  if(key==='Backspace'){e.preventDefault();del();el=kel('Backspace')}
+  else if(key==='Enter'){e.preventDefault();add('\n');el=kel('\n')}
+  else if(key===' '){e.preventDefault();add(' ');el=kel(' ')}
+  else if(key.length===1){
+    e.preventDefault();const lower=key.toLowerCase();
+    if(/[a-z]/i.test(key)||(lang().id==='bn'&&(key==='['||key===']'))){letter(lower,key!==lower||e.shiftKey);el=kel(lower)}
+    else{
+      if(lang().id==='avro'&&comp&&/[a-z`^:]/i.test(key))typeAvro(key);
+      else if(/\d/.test(key)&&lang().id!=='en')add('১২৩৪৫৬৭৮৯০'[(+key+9)%10]);
+      else if(key==='.'&&lang().id!=='en')add('।');
+      else add(key);
+      el=kel(key)||hintEl(key);
+      if(/\d/.test(key)&&page==='alpha'&&!panel){const bd=nr.children[(+key+9)%10];if(bd)lit(e.code+'n',bd)}
+    }
+  }else return;
+  lit(e.code,el);
+});
+addEventListener('keyup',e=>{[e.code,e.code+'n'].forEach(c=>{if(held[c]){held[c].classList.remove('on');delete held[c]}})});
+addEventListener('blur',()=>{for(const c in held){held[c].classList.remove('on');delete held[c]}});
+// pipeline
+const steps=[
+ ['Checkout','Clone repo and submodules','git clone'],
+ ['Setup toolchain','JDK 17, Android SDK 34, NDK r25c','setup'],
+ ['Gradle sync','Resolve plugins and dependencies','gradlew'],
+ ['Native core','Compile JNI engine (pocketfft, ggml)','ndk-build'],
+ ['Assemble','Build stable release APKs','assembleStableRelease'],
+ ['Sign &amp; ship','arm64-v8a and universal artifacts','release']
+];
+const pl=document.getElementById('pl'),bar=document.getElementById('bar'),msg=document.getElementById('msg'),runb=document.getElementById('run');
+steps.forEach((s,i)=>{pl.insertAdjacentHTML('beforeend',`<div class="step" id="s${i}"><div class="dotm"></div><div><h4>${s[0]}</h4><p>${s[1]}</p></div><code>${s[2]}</code></div>`)});
+for(let i=0;i<24;i++)bar.appendChild(document.createElement('i'));
+let busy=false;
+runb.onclick=async()=>{
+  if(busy)return;busy=true;runb.innerHTML=ic('circleDots')+' Running';
+  document.querySelectorAll('.step').forEach(s=>s.className='step');
+  bar.querySelectorAll('i').forEach(i=>i.className='');
+  const dots=bar.children,per=dots.length/steps.length;
+  for(let i=0;i<steps.length;i++){
+    const el=document.getElementById('s'+i);el.classList.add('run');msg.textContent=`stage ${i+1}/${steps.length} · ${steps[i][0].replace('&amp;','&')}`;
+    for(let d=0;d<per;d++){await new Promise(r=>setTimeout(r,170));dots[i*per+d].className='on'}
+    el.className='step ok';
+  }
+  msg.innerHTML=ic('check')+' pipeline passed · APKs ready';msg.style.display='inline-flex';runb.innerHTML=ic('circlePlay')+' Run again';busy=false;
+};
+
+// ---- live GitHub data ----
+// ---- which repo does this page describe? worked out automatically ----
+const UPSTREAM='fahitakrim/Orbit-Board';   // the project's home repo, used when nothing else is detected
+const REPO_RE=/^[\w.-]+\/[\w.-]+$/;
+function detectRepo(){
+  const q=new URLSearchParams(location.search).get('repo');
+  if(q&&REPO_RE.test(q))return[q,'from ?repo= in the address'];
+  const m=location.hostname.match(/^([\w-]+)\.github\.io$/i),seg=location.pathname.split('/').filter(Boolean)[0];
+  if(m&&seg&&REPO_RE.test(m[1]+'/'+seg))return[m[1]+'/'+seg,"from this site's GitHub Pages address"];
+  return[UPSTREAM,'default'];
+}
+const [REPO,REPO_SRC]=detectRepo();                 // stats + CI + links + clone command
+const RELEASE_REPOS=[...new Set([REPO,UPSTREAM])];  // first one with a release wins
+(function(){
+  const base='https://github.com/'+REPO,set=(id,h)=>{const e=document.getElementById(id);if(e)e.href=h};
+  set('a-gh',base);set('f-issues',base+'/issues');set('a-arm',base+'/releases/latest');set('a-uni',base+'/releases/latest');
+  const c=document.getElementById('clone');if(c)c.textContent='git clone '+base+'.git\ncd '+REPO.split('/')[1]+'\n./gradlew assembleStableRelease';
+  const n=document.getElementById('repo-note');if(n)n.textContent='Showing '+REPO+' ('+REPO_SRC+').';
+})();
+const API='https://api.github.com/repos/';
+const $=id=>document.getElementById(id);
+async function gj(path){
+  const k='ob:'+path;let c=null;
+  try{c=JSON.parse(localStorage.getItem(k)||'null')}catch(e){}
+  try{
+    const r=await fetch(API+path,{headers:{Accept:'application/vnd.github+json'}});
+    if(!r.ok)throw new Error(r.status);
+    const j=await r.json();
+    try{localStorage.setItem(k,JSON.stringify(j))}catch(e){}
+    return j;
+  }catch(e){if(c)return c;throw e}
+}
+function ago(d){const s=(Date.now()-new Date(d))/1000;
+  if(s<60)return 'just now';if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
+async function refresh(){
+  const ls=$('ls');
+  try{
+    const r=await gj(REPO);
+    $('m-star').textContent=r.stargazers_count;$('m-fork').textContent=r.forks_count;
+    $('m-iss').textContent=r.open_issues_count;$('m-push').textContent=ago(r.pushed_at);
+    ls.innerHTML='<span class="lv on"></span>live · '+new Date().toLocaleTimeString();
+  }catch(e){ls.innerHTML='<span class="lv"></span>offline · showing static data'}
+  for(const rp of RELEASE_REPOS){
+    try{
+      const rel=await gj(rp+'/releases/latest');
+      $('ver').textContent=rel.tag_name+' stable';
+      $('rel-name').textContent=rel.name||rel.tag_name;
+      $('rel-meta').textContent='Published '+ago(rel.published_at)+' · '+rp;
+      const apks=(rel.assets||[]).filter(a=>a.name.endsWith('.apk'));
+      const arm=apks.find(a=>/arm64/i.test(a.name)),uni=apks.find(a=>/universal/i.test(a.name));
+      if(arm)$('a-arm').href=arm.browser_download_url;
+      if(uni)$('a-uni').href=uni.browser_download_url;
+      break;
+    }catch(e){$('rel-name').textContent='No release found';}
+  }
+  try{
+    const w=await gj(REPO+'/actions/runs?per_page=5');
+    const rs=w.workflow_runs||[];
+    $('runs').innerHTML=rs.length?rs.map(x=>{
+      const st=x.status!=='completed'?'progress':x.conclusion;
+      return `<a class="run-r ${st}" href="${x.html_url}"><b></b><span>${x.name}</span><code>${st} · ${ago(x.created_at)}</code></a>`}).join('')
+      :'<p class="note">No workflow runs yet. Add .github/workflows/build.yml and push.</p>';
+  }catch(e){$('runs').innerHTML='<p class="note">Could not load runs.</p>'}
+}
+refresh();setInterval(refresh,60000);
+// ---------- text scramble (vanilla, no library) ----------
+const RM=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}})();
+const SCH='·:;+=*#0123456789';
+function scrambleEl(el,o){
+  o=o||{};const dur=o.dur||900,delay=o.delay||0,nodes=[];
+  const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let n;
+  while((n=w.nextNode())){if(!n.nodeValue.trim()&&n.__o===undefined)continue;if(n.__o===undefined)n.__o=n.nodeValue;nodes.push(n)}
+  const total=nodes.reduce((a,x)=>a+x.__o.length,0),th=[];
+  for(let i=0;i<total;i++)th.push((i/Math.max(total,1))*.5+((i*7919)%100)/100*.2);
+  const finish=()=>nodes.forEach(x=>x.nodeValue=x.__o);
+  if(RM||!total){finish();return{stop(){}}}
+  let t0=null,raf=0,stopped=false,last=0,cache=[];
+  const draw=(p,force)=>{
+    const now=performance.now();if(!force&&now-last<55)return;last=now;let gi=0;
+    nodes.forEach(x=>{let r='';for(const c of x.__o){
+      if(/\s/.test(c)){r+=c}else if(p>=th[gi]){r+=c}else{r+=SCH[Math.floor(Math.random()*SCH.length)]}gi++}
+      x.nodeValue=r});
+  };
+  draw(0,true);
+  const frame=ts=>{if(stopped)return;if(t0===null)t0=ts+delay;const k=(ts-t0)/dur;
+    if(k<0){draw(0);raf=requestAnimationFrame(frame);return}
+    if(k>=1){finish();return}
+    draw(k);raf=requestAnimationFrame(frame)};
+  raf=requestAnimationFrame(frame);
+  return{stop(){stopped=true;cancelAnimationFrame(raf);finish()}};
+}
+// subtle scramble: hero title on load, section titles when scrolled into view
+(function(){
+  const h1=document.querySelector('h1');if(h1)setTimeout(()=>scrambleEl(h1,{dur:800,delay:100}),200);
+  const els=[...document.querySelectorAll('.sh h2')];
+  if(!('IntersectionObserver' in window)){return}
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);scrambleEl(e.target,{dur:520})}}),{threshold:.6});
+  els.forEach(e=>io.observe(e));
+})();
+// ---------- gooey glass nav (logic adapted from Simey's CodePen) ----------
+(function(){
+  const list=document.getElementById('dock-list'),effectEl=document.querySelector('.effect.filter'),textEl=document.querySelector('.effect.text');
+  if(!list||!effectEl||!textEl)return;
+  const lis=[...list.querySelectorAll('li')];
+  const animationTime=600,pCount=15,timeVariance=300,colors=[1,2,3,1,2,3,1,4];
+  let lock=0;
+  const noise=(n=1)=>n/2-Math.random()*n;
+  const getXY=(dist,i,total)=>{const a=((360+noise(8))/total*i)*Math.PI/180;return[dist*Math.cos(a),dist*Math.sin(a)]};
+  function createParticle(i,t,d,r){
+    const rot=noise(r/10);
+    return{start:getXY(d[0],pCount-i,pCount),end:getXY(d[1]+noise(7),pCount-i,pCount),time:t,scale:1+noise(.2),color:colors[Math.floor(Math.random()*colors.length)],rotate:rot>0?(rot+r/20)*10:(rot-r/20)*10};
+  }
+  function makeParticles(el){
+    const d=[90,10],r=100;
+    el.style.setProperty('--time',(animationTime*2+timeVariance)+'ms');
+    for(let i=0;i<pCount;i++){
+      const t=animationTime*2+noise(timeVariance*2),p=createParticle(i,t,d,r);
+      el.classList.remove('active');
+      setTimeout(()=>{
+        const pa=document.createElement('span'),pt=document.createElement('span');
+        pa.className='particle';
+        pa.style.cssText='--start-x:'+p.start[0]+'px;--start-y:'+p.start[1]+'px;--end-x:'+p.end[0]+'px;--end-y:'+p.end[1]+'px;--time:'+p.time+'ms;--scale:'+p.scale+';--color:var(--color-'+p.color+',white);--rotate:'+p.rotate+'deg;';
+        pt.className='point';pa.appendChild(pt);el.appendChild(pa);
+        requestAnimationFrame(()=>el.classList.add('active'));
+        setTimeout(()=>{try{el.removeChild(pa)}catch(e){}},t);
+      },30);
+    }
+  }
+  function place(li){
+    const r=li.getBoundingClientRect(),st={left:r.x+'px',top:r.y+'px',width:r.width+'px',height:r.height+'px'};
+    Object.assign(effectEl.style,st);Object.assign(textEl.style,st);
+    textEl.classList.remove('hidden');textEl.textContent=li.textContent.trim();
+  }
+  function activate(li){
+    place(li);
+    if(li.classList.contains('active'))return;
+    lis.forEach(x=>x.classList.remove('active'));
+    effectEl.querySelectorAll('.particle').forEach(x=>effectEl.removeChild(x));
+    li.classList.add('active');textEl.classList.remove('active');
+    setTimeout(()=>textEl.classList.add('active'),100);
+    makeParticles(effectEl);
+  }
+  function deactivate(){
+    if(!lis.some(x=>x.classList.contains('active')))return;
+    lis.forEach(x=>x.classList.remove('active'));
+    effectEl.querySelectorAll('.particle').forEach(x=>effectEl.removeChild(x));
+    effectEl.classList.remove('active');textEl.classList.add('hidden');
+  }
+  lis.forEach(li=>{
+    const a=li.querySelector('a');
+    li.addEventListener('click',()=>{lock=Date.now()+1100;activate(li)});
+    a.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){lock=Date.now()+1100;activate(li)}});
+  });
+  // highlight the section you are reading
+  const map={};lis.forEach(li=>map[li.dataset.t]=li);
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>es.forEach(e=>{
+      if(!e.isIntersecting||Date.now()<lock)return;
+      const li=map[e.target.id];if(li&&li.offsetParent!==null)activate(li);
+    }),{rootMargin:'-45% 0px -50% 0px'});
+    Object.keys(map).forEach(id=>{const sec=document.getElementById(id);if(sec)io.observe(sec)});
+  }
+  addEventListener('scroll',()=>{if(scrollY<120&&Date.now()>=lock)deactivate()},{passive:true});
+  if('ResizeObserver' in window)new ResizeObserver(()=>{const a=list.querySelector('li.active');if(a)place(a)}).observe(document.body);
+})();
+</script>
+</body>
+</html>
